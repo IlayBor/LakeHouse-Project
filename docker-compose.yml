@@ -1,22 +1,46 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres:15
-    container_name: postgres
+  # MongoDB for Nessie Catalog
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
     environment:
-      POSTGRES_USER: ilaybor
-      POSTGRES_PASSWORD: 24342434
-      POSTGRES_DB: metastore
+      MONGO_INITDB_ROOT_USERNAME: ilaybor
+      MONGO_INITDB_ROOT_PASSWORD: 24342434
+      MONGO_INITDB_DATABASE: nessie
+    command: ["mongod", "--quiet", "--logpath", "/dev/null"]
     ports:
-      - "5433:5432"
+      - "27017:27017"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - mongodb_data:/data/db
     networks:
       - trino-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ilaybor -d metastore"]
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # Nessie Iceberg Catalog
+  nessie:
+    image: projectnessie/nessie:latest
+    container_name: nessie
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      NESSIE_VERSION_STORE_TYPE: MONGODB
+      QUARKUS_MONGODB_DATABASE: nessie
+      QUARKUS_MONGODB_CONNECTION_STRING: mongodb://ilaybor:24342434@mongodb:27017/nessie?authSource=admin
+      QUARKUS_OTEL_SDK_DISABLED: "true"
+    ports:
+      - "19120:19120"
+    networks:
+      - trino-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:19120/api/v2/config || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -51,7 +75,7 @@ services:
     volumes:
       - ./trino/etc/trino/catalog:/etc/trino/catalog
     depends_on:
-      postgres:
+      nessie:
         condition: service_healthy
       minio:
         condition: service_healthy
@@ -64,7 +88,7 @@ services:
       retries: 10
 
 volumes:
-  postgres-data:
+  mongodb_data:
   minio-data:
 
 networks:
