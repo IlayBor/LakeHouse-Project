@@ -56,7 +56,7 @@ services:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - minio-data:/data
+      - minio_data:/data
     command: server /data --console-address ":9001"
     networks:
       - trino-network
@@ -87,9 +87,50 @@ services:
       timeout: 5s
       retries: 10
 
+  # Postgres for metabase
+  postgres:
+    image: postgres:17
+    container_name: postgres
+    hostname: postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: ilaybor
+      POSTGRES_DB: metabaseappdb
+      POSTGRES_PASSWORD: 24342434
+    networks:
+      - trino-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    hostname: metabase
+    ports:
+      - 3000:3000
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: metabaseappdb
+      MB_DB_PORT: 5432
+      MB_DB_USER: ilaybor
+      MB_DB_PASS: 24342434
+      MB_DB_HOST: postgres
+    networks:
+      - trino-network
+    healthcheck:
+      test: curl --fail -I http://localhost:3000/api/health || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      - postgres
+
+
 volumes:
   mongodb_data:
-  minio-data:
+  minio_data:
+  postgres_data:
 
 networks:
   trino-network:
