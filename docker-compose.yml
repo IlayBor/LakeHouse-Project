@@ -1,49 +1,27 @@
 version: '3.8'
 
 services:
-  # MongoDB for Nessie Catalog
-  mongodb:
-    image: mongo:7.0
-    container_name: mongodb
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ilaybor
-      MONGO_INITDB_ROOT_PASSWORD: 24342434
-      MONGO_INITDB_DATABASE: nessie
-    command: ["mongod", "--quiet", "--logpath", "/dev/null"]
+  # Postgres for LakeKeeper Catalog
+  lakekeeper-postgres:
+    image: postgres:17
+    container_name: lakekeeper-postgres
+    hostname: lakekeeper-postgres
     ports:
-      - "27017:27017"
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: ilaybor
+      POSTGRES_DB: lakekeeper_catalog
+      POSTGRES_PASSWORD: 24342434
+    networks:
+      - trino-network
     volumes:
-      - mongodb_data:/data/db
-    networks:
-      - trino-network
+      - lakekeeper_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
-
-  # Nessie Iceberg Catalog
-  nessie:
-    image: projectnessie/nessie:latest
-    container_name: nessie
-    depends_on:
-      mongodb:
-        condition: service_healthy
-    environment:
-      NESSIE_VERSION_STORE_TYPE: MONGODB
-      QUARKUS_MONGODB_DATABASE: nessie
-      QUARKUS_MONGODB_CONNECTION_STRING: mongodb://ilaybor:24342434@mongodb:27017/nessie?authSource=admin
-      QUARKUS_OTEL_SDK_DISABLED: "true"
-    ports:
-      - "19120:19120"
-    networks:
-      - trino-network
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:19120/api/v2/config || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: [ "CMD-SHELL", "pg_isready -U ilaybor -p 5432 -d lakekeeper_catalog" ]
+      interval: 2s
+      timeout: 10s
+      retries: 2
+      start_period: 10s
 
   # MinIO Object Storage
   minio:
@@ -66,6 +44,46 @@ services:
       timeout: 5s
       retries: 5
 
+  # Lakekeeper Iceberg Catalog
+  lakekeeper:
+    image: quay.io/lakekeeper/catalog:latest-main
+    pull_policy: always
+    container_name: lakekeeper
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment: &lakekeeper-environment
+      LAKEKEEPER__CATALOG__DATABASE__POSTGRES__CONNECTION_STRING: "postgres://ilaybor:24342434@lakekeeper-postgres:5432/lakekeeper_catalog"
+      LAKEKEEPER__AUTH__OIDC_PROVIDER_URI: "" 
+      LAKEKEEPER__PG_ENCRYPTION_KEY: This-is-NOT-Secure!
+      LAKEKEEPER__PG_DATABASE_URL_READ: postgresql://ilaybor:24342434@lakekeeper-postgres:5432/lakekeeper_catalog
+      LAKEKEEPER__PG_DATABASE_URL_WRITE: postgresql://ilaybor:24342434@lakekeeper-postgres:5432/lakekeeper_catalog
+      LAKEKEEPER__AUTHZ_BACKEND: allowall
+    ports:
+      - "8181:8181"
+    networks:
+      - trino-network
+    command: [ "serve" ]
+    healthcheck:
+      test: [ "CMD", "/home/nonroot/lakekeeper", "healthcheck" ]
+      interval: 1s
+      timeout: 10s
+      retries: 3
+      start_period: 3s
+
+  # Lakekeeper Init
+  migrate:
+    image: quay.io/lakekeeper/catalog:latest-main
+    pull_policy: always
+    environment: *lakekeeper-environment
+    restart: "no"
+    command: [ "migrate" ]
+    depends_on:
+      lakekeeper-postgres:
+        condition: service_healthy
+    networks:
+      - trino-network
+  
   # Trino Coordinator
   trino:
     image: trinodb/trino:latest
@@ -75,7 +93,7 @@ services:
     volumes:
       - ./trino/etc/trino/catalog:/etc/trino/catalog
     depends_on:
-      nessie:
+      lakekeeper:
         condition: service_healthy
       minio:
         condition: service_healthy
@@ -88,7 +106,7 @@ services:
       retries: 10
 
   # Postgres for metabase
-  postgres:
+  metabase-postgres:
     image: postgres:17
     container_name: postgres
     hostname: postgres
@@ -101,7 +119,7 @@ services:
     networks:
       - trino-network
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - metabase_postgres_data:/var/lib/postgresql/data
   
   # Metabase
   metabase:
@@ -125,13 +143,15 @@ services:
       timeout: 5s
       retries: 5
     depends_on:
-      - postgres
+      - metabase-postgres
 
 
 volumes:
+  lakekeeper_postgres_data:
   mongodb_data:
   minio_data:
-  postgres_data:
+  metabase_postgres_data:
+  
 
 networks:
   trino-network:
