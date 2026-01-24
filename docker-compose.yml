@@ -1,6 +1,44 @@
 version: '3.8'
 
 services:
+  # MinIO Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: ilaybor
+      MINIO_ROOT_PASSWORD: 24342434
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - trino-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Create default bucket called "warehouse"
+  createbuckets:
+    image: minio/minio:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    restart: on-failure
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      /usr/bin/mc alias set dockerminio http://minio:9000 ilaybor 24342434;
+      /usr/bin/mc mb --ignore-existing dockerminio/warehouse;
+      exit 0;
+      "
+    networks:
+      trino-network:
+
   # Postgres for LakeKeeper Catalog
   lakekeeper-postgres:
     image: postgres:17
@@ -23,27 +61,6 @@ services:
       retries: 2
       start_period: 10s
 
-  # MinIO Object Storage
-  minio:
-    image: minio/minio:latest
-    container_name: minio
-    environment:
-      MINIO_ROOT_USER: ilaybor
-      MINIO_ROOT_PASSWORD: 24342434
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - minio_data:/data
-    command: server /data --console-address ":9001"
-    networks:
-      - trino-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   # Lakekeeper Iceberg Catalog
   lakekeeper:
     image: quay.io/lakekeeper/catalog:latest-main
@@ -64,6 +81,7 @@ services:
     networks:
       - trino-network
     command: [ "serve" ]
+    hostname: lakekeeper
     healthcheck:
       test: [ "CMD", "/home/nonroot/lakekeeper", "healthcheck" ]
       interval: 1s
@@ -83,7 +101,23 @@ services:
         condition: service_healthy
     networks:
       - trino-network
-  
+
+  # Create default lakekeeper warehouse and namespace
+  lakekeeper-init:
+      image: python:3.9-slim
+      depends_on:
+        lakekeeper:
+          condition: service_healthy
+        createbuckets:
+          condition: service_completed_successfully
+      volumes:
+        - ./lakekeeper:/lakekeeper
+      working_dir: /lakekeeper
+      command: >
+        sh -c "pip install requests && python init.py"
+      networks:
+        - trino-network
+
   # Trino Coordinator
   trino:
     image: trinodb/trino:latest
@@ -145,14 +179,12 @@ services:
     depends_on:
       - metabase-postgres
 
-
 volumes:
   lakekeeper_postgres_data:
   mongodb_data:
   minio_data:
   metabase_postgres_data:
   
-
 networks:
   trino-network:
     driver: bridge
