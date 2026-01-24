@@ -23,7 +23,7 @@ services:
       retries: 5
 
   # Create default bucket called "warehouse"
-  createbuckets:
+  minio_create_default_bucket:
     image: minio/minio:latest
     depends_on:
       minio:
@@ -89,7 +89,7 @@ services:
       retries: 3
       start_period: 3s
 
-  # Lakekeeper Init
+  # Lakekeeper migrate function
   migrate:
     image: quay.io/lakekeeper/catalog:latest-main
     pull_policy: always
@@ -108,7 +108,7 @@ services:
       depends_on:
         lakekeeper:
           condition: service_healthy
-        createbuckets:
+        minio_create_default_bucket:
           condition: service_completed_successfully
       volumes:
         - ./lakekeeper:/lakekeeper
