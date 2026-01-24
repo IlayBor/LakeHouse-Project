@@ -1,12 +1,6 @@
 import requests
 import json
 
-# print("Creating Project...")
-# with open('project.json', 'r') as f:
-#     project_data = json.load(f)
-# project_response = requests.post(f"http://lakekeeper:8181/management/v1/project", json=project_data)
-# print("Created Project!")
-
 HOST = "lakekeeper"
 
 print("Accept TOS...")
@@ -16,7 +10,6 @@ print("Accepted!")
 print("Creating Warehouse...")
 with open('warehouse.json', 'r') as f:
     warehouse_data = json.load(f)
-# warehouse_data["project-id"] = project_response.json()["project-id"]
 response = requests.post(f"http://{HOST}:8181/management/v1/warehouse", json=warehouse_data)
 print("Created Warehouse!")
 
