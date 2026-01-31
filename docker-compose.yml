@@ -1,10 +1,9 @@
-version: '3.8'
-
 services:
   # MinIO Object Storage
   minio:
     image: minio/minio:latest
     container_name: minio
+    hostname: minio
     environment:
       MINIO_ROOT_USER: ilaybor
       MINIO_ROOT_PASSWORD: 24342434
@@ -14,17 +13,18 @@ services:
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
-    networks:
-      - trino-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - lakehouse-network
 
   # Create default bucket called "warehouse"
   minio_create_default_bucket:
     image: minio/minio:latest
+    container_name: minio_create_default_bucket
     depends_on:
       minio:
         condition: service_healthy
@@ -37,154 +37,156 @@ services:
       exit 0;
       "
     networks:
-      trino-network:
+      lakehouse-network:
 
   # Postgres for LakeKeeper Catalog
   lakekeeper-postgres:
     image: postgres:17
     container_name: lakekeeper-postgres
     hostname: lakekeeper-postgres
-    ports:
-      - "5434:5432"
     environment:
       POSTGRES_USER: ilaybor
       POSTGRES_DB: lakekeeper_catalog
       POSTGRES_PASSWORD: 24342434
-    networks:
-      - trino-network
+    ports:
+      - "5434:5432"
     volumes:
       - lakekeeper_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ilaybor -p 5432 -d lakekeeper_catalog" ]
+      test: ["CMD-SHELL", "pg_isready -U ilaybor -p 5432 -d lakekeeper_catalog"]
       interval: 2s
       timeout: 10s
       retries: 2
       start_period: 10s
+    networks:
+      - lakehouse-network
+
 
   # Lakekeeper Iceberg Catalog
   lakekeeper:
     image: quay.io/lakekeeper/catalog:latest-main
-    pull_policy: always
     container_name: lakekeeper
+    hostname: lakekeeper
     depends_on:
       migrate:
         condition: service_completed_successfully
     environment: &lakekeeper-environment
       LAKEKEEPER__CATALOG__DATABASE__POSTGRES__CONNECTION_STRING: "postgres://ilaybor:24342434@lakekeeper-postgres:5432/lakekeeper_catalog"
-      LAKEKEEPER__AUTH__OIDC_PROVIDER_URI: "" 
+      LAKEKEEPER__AUTH__OIDC_PROVIDER_URI: ""
       LAKEKEEPER__PG_ENCRYPTION_KEY: This-is-NOT-Secure!
       LAKEKEEPER__PG_DATABASE_URL_READ: postgresql://ilaybor:24342434@lakekeeper-postgres:5432/lakekeeper_catalog
       LAKEKEEPER__PG_DATABASE_URL_WRITE: postgresql://ilaybor:24342434@lakekeeper-postgres:5432/lakekeeper_catalog
       LAKEKEEPER__AUTHZ_BACKEND: allowall
     ports:
       - "8181:8181"
-    networks:
-      - trino-network
-    command: [ "serve" ]
-    hostname: lakekeeper
+    command: ["serve"]
     healthcheck:
-      test: [ "CMD", "/home/nonroot/lakekeeper", "healthcheck" ]
+      test: ["CMD", "/home/nonroot/lakekeeper", "healthcheck"]
       interval: 1s
       timeout: 10s
       retries: 3
       start_period: 3s
+    networks:
+      - lakehouse-network
 
   # Lakekeeper migrate function
   migrate:
     image: quay.io/lakekeeper/catalog:latest-main
-    pull_policy: always
-    environment: *lakekeeper-environment
-    restart: "no"
-    command: [ "migrate" ]
+    container_name: lakekeeper-migrate
     depends_on:
       lakekeeper-postgres:
         condition: service_healthy
+    environment: *lakekeeper-environment
+    command: ["migrate"]
     networks:
-      - trino-network
+      - lakehouse-network
 
   # Create default lakekeeper warehouse and namespace
   lakekeeper-init:
-      image: python:3.9-slim
-      depends_on:
-        lakekeeper:
-          condition: service_healthy
-        minio_create_default_bucket:
-          condition: service_completed_successfully
-      volumes:
-        - ./lakekeeper:/lakekeeper
-      working_dir: /lakekeeper
-      command: >
-        sh -c "pip install requests && python init.py"
-      networks:
-        - trino-network
+    image: python:3.9-slim
+    container_name: lakekeeper-init-script
+    depends_on:
+      lakekeeper:
+        condition: service_healthy
+      minio_create_default_bucket:
+        condition: service_completed_successfully
+    volumes:
+      - ./lakekeeper:/lakekeeper
+    working_dir: /lakekeeper
+    command: >
+      sh -c "pip install requests && python init.py"
+    networks:
+      - lakehouse-network
 
   # Trino Coordinator
   trino:
     image: trinodb/trino:latest
     container_name: trino
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./trino/etc/trino/catalog:/etc/trino/catalog
+    hostname: trino
     depends_on:
       lakekeeper:
         condition: service_healthy
       minio:
         condition: service_healthy
-    networks:
-      - trino-network
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./trino/etc/trino/catalog:/etc/trino/catalog
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/v1/info"]
       interval: 10s
       timeout: 5s
       retries: 10
+    networks:
+      - lakehouse-network
+
 
   # Postgres for metabase
   metabase-postgres:
     image: postgres:17
-    container_name: postgres
-    hostname: postgres
-    ports:
-      - "5433:5432"
+    container_name: metabase-postgres
+    hostname: metabase-postgres
     environment:
       POSTGRES_USER: ilaybor
       POSTGRES_DB: metabaseappdb
       POSTGRES_PASSWORD: 24342434
-    networks:
-      - trino-network
+    ports:
+      - "5433:5432"
     volumes:
       - metabase_postgres_data:/var/lib/postgresql/data
-  
+    networks:
+      - lakehouse-network
+
   # Metabase
   metabase:
     image: metabase/metabase:latest
     container_name: metabase
     hostname: metabase
-    ports:
-      - 3000:3000
+    depends_on:
+      - metabase-postgres
     environment:
       MB_DB_TYPE: postgres
       MB_DB_DBNAME: metabaseappdb
       MB_DB_PORT: 5432
       MB_DB_USER: ilaybor
       MB_DB_PASS: 24342434
-      MB_DB_HOST: postgres
-    networks:
-      - trino-network
+      MB_DB_HOST: metabase-postgres
+    ports:
+      - 3000:3000
     healthcheck:
       test: curl --fail -I http://localhost:3000/api/health || exit 1
       interval: 15s
       timeout: 5s
       retries: 5
-    depends_on:
-      - metabase-postgres
+    networks:
+      - lakehouse-network
 
 volumes:
   lakekeeper_postgres_data:
-  mongodb_data:
   minio_data:
   metabase_postgres_data:
-  
+  metastore_db_data:
+
 networks:
-  trino-network:
+  lakehouse-network:
     driver: bridge

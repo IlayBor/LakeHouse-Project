@@ -44,19 +44,22 @@ def init():
             return
         
     # Creating Namespace
-    try:
-        logging.info("Creating Namespace...")
-        ns_response = requests.post(f"{BASE_URL}/catalog/v1/{warehouse_id}/namespaces", json={"namespace": ["default"]})
-        ns_response.raise_for_status()
-        logging.info("Created Namespace!")
-    except requests.exceptions.RequestException as err:
-        error_data = err.response.json()['error']
-        if error_data['type'] == 'AlreadyExistsException':
-            logging.warning("Namespace already created for this warehouse, moving on...")
-            pass
-        else:    
-            logging.error(f"Namespace Creation Failure: {error_data['code']} {error_data['message']}")
-            return
+    namespaces = ["raw", "bronze", "silver", "gold"]
+    for ns in namespaces:
+        payload={"namespace": [ns], "properties": {"location": f"s3://warehouse/{ns}"}}
+        try:
+            logging.info("Creating Namespace...")
+            ns_response = requests.post(f"{BASE_URL}/catalog/v1/{warehouse_id}/namespaces", json=payload)
+            ns_response.raise_for_status()
+            logging.info(f"Created Namespace {ns}!")
+        except requests.exceptions.RequestException as err:
+            error_data = err.response.json()['error']
+            if error_data['type'] == 'AlreadyExistsException':
+                logging.warning("Namespace already created for this warehouse, moving on...")
+                pass
+            else:    
+                logging.error(f"Namespace Creation Failure: {error_data['code']} {error_data['message']}")
+                return
 
 if __name__ == "__main__":
     init()
