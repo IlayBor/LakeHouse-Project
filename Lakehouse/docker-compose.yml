@@ -190,3 +190,4 @@ volumes:
 networks:
   lakehouse-network:
     driver: bridge
+    name: shared-data-network
