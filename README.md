@@ -20,3 +20,5 @@ To run this just cd into *./lakehouse* and run *docker compose up*
 
 2. for the **orchestration + transformation** (airflow + dbt)
 To run this just cd into *./airflow* and run *docker compose up -d --build* 
+
+**you must run the lakehouse architecture compose before running the orchestration + transformation compose.**
