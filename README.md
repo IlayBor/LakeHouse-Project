@@ -7,7 +7,7 @@ These are the main tools of the project
 **Trino** - http://localhost:8080  
 
 
-## How to run Locally
+## How to run locally
 You need to add minio and trino to your hosts file to run it locally (the actual ingestion script and dbt).  
 on windows - **C:\Windows\System32\drivers\etc** as follows:  
 127.0.0.1 minio  
