@@ -1,17 +1,17 @@
 # Tools
-These are the main tools of the project
-**Airflow** - http://localhost:8090
-**MinIO** - http://localhost:9001
-**LakeKeeper** - http://localhost:8181
-**MetaBase** - http://localhost:3000
-**Trino** - http://localhost:8080
+These are the main tools of the project  
+**Airflow** - http://localhost:8090  
+**MinIO** - http://localhost:9001  
+**LakeKeeper** - http://localhost:8181  
+**MetaBase** - http://localhost:3000  
+**Trino** - http://localhost:8080  
 
 
 ## How to run Locally
-You need to add minio and trino to your hosts file to run it locally (the actual ingestion script and dbt).
-on windows - **C:\Windows\System32\drivers\etc** as follows:
-127.0.0.1 minio
-127.0.0.1 trino
+You need to add minio and trino to your hosts file to run it locally (the actual ingestion script and dbt).  
+on windows - **C:\Windows\System32\drivers\etc** as follows:  
+127.0.0.1 minio  
+127.0.0.1 trino  
 
 ## Docker composes
 currently there are two docker composes:
