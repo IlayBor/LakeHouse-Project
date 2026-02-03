@@ -49,21 +49,22 @@ x-airflow-common:
   # In order to add custom dependencies or upgrade provider distributions you can use your extended image.
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
-  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.1.6}
+  # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.1.6}
   build: .
   env_file:
     - ${ENV_FILE_PATH:-.env}
   environment:
     &airflow-common-env
+    # AIRFLOW__API__PORT: 8090
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
-    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://ilaybor:24342434@postgres/airflow
-    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://ilaybor:24342434@postgres/airflow
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-    AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://airflow-apiserver:8090/execution/'
+    AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://airflow-apiserver:8080/execution/'
     # yamllint disable rule:line-length
     # Use simple http server on scheduler for health checks
     # See https://airflow.apache.org/docs/apache-airflow/stable/administration-and-deployment/logging-monitoring/check-health.html#scheduler-health-check-server
@@ -86,20 +87,21 @@ x-airflow-common:
       condition: service_healthy
     postgres:
       condition: service_healthy
+  networks:
+    - default
+    - lakehouse-network
 
 services:
   postgres:
     image: postgres:16
     environment:
-      POSTGRES_USER: ilaybor
-      POSTGRES_PASSWORD: 24342434
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
-    ports:
-      - "5439:5432"
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "ilaybor", "-d", "airflow"]
+      test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 10s
       retries: 5
       start_period: 5s
@@ -135,9 +137,6 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-    networks:
-      - default
-      - lakehouse-network
 
   airflow-scheduler:
     <<: *airflow-common
@@ -153,11 +152,6 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-    networks:
-      - default
-      - lakehouse-network
-    volumes:
-      - ./dbt:/opt/airflow/dbt
 
   airflow-dag-processor:
     <<: *airflow-common
@@ -198,11 +192,6 @@ services:
         condition: service_healthy
       airflow-init:
         condition: service_completed_successfully
-    networks:
-      - default
-      - lakehouse-network
-    volumes:
-      - ./dbt:/opt/airflow/dbt
 
   airflow-triggerer:
     <<: *airflow-common
@@ -348,11 +337,10 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
+volumes:
+  postgres-db-volume:
+
 networks:
   lakehouse-network:
     external: true
     name: shared-data-network
-
-volumes:
-  postgres-db-volume:
-  

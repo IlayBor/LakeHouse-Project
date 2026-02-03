@@ -10,7 +10,7 @@ lakehouse_profile:
       host: trino
       port: 8080
       catalog: iceberg
-      schema: default
+      schema: ""
       threads: 1
       client_tags:
         - dbt

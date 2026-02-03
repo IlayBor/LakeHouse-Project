@@ -9,5 +9,8 @@ RUN apt-get update && \
 # Switch back to airflow user to install python packages
 USER airflow
 
+# Copy requirements file
+COPY requirements.txt /requirements.txt
+
 # Install dbt-trino (this automatically installs dbt-core)
-RUN pip install --no-cache-dir dbt-trino
+RUN pip install --no-cache-dir -r /requirements.txt

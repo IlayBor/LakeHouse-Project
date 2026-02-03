@@ -1,0 +1,9 @@
+sources:
+  - name: iceberg
+    description: "raw iceberg"
+    database: iceberg
+    schema: bronze
+
+    tables:
+      - name: fct_sales
+        description: "steam deals"
