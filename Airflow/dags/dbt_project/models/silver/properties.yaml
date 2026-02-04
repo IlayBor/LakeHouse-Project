@@ -2,3 +2,7 @@ models:
   - name: short_sales
     config:
       schema: silver
+
+  - name: game_list
+    config:
+      schema: silver

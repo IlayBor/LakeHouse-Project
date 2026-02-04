@@ -5,12 +5,10 @@ lakehouse_profile:
       type: trino
       method: none
       user: ilaybor
-      password: ""
-      
       host: trino
       port: 8080
       catalog: iceberg
+      http_scheme: http
       schema: ""
-      threads: 1
       client_tags:
         - dbt

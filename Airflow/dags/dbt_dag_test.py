@@ -1,36 +1,35 @@
-from airflow import DAG
-from airflow.operators.bash import BashOperator
-from airflow.operators.python import PythonOperator
-from datetime import datetime
-from cosmos.operators.local import DbtCloneLocalOperator
-from cosmos import ProfileConfig, ProjectConfig
 from pathlib import Path
 
-DBT_PROJ_DIR = str(Path(__file__).parent / "dbt_project")
+from cosmos import DbtDag, ProjectConfig, ProfileConfig, RenderConfig
+from cosmos.profiles import TrinoLDAPProfileMapping
+from datetime import datetime
+
+# DEFAULT_DBT_ROOT_PATH = str(Path(__file__).parent/"dbt_project")
 
 profile_config = ProfileConfig(
     profile_name="lakehouse_profile",
     target_name="dev",
+    profile_mapping=TrinoLDAPProfileMapping(
+        conn_id="trino",
+        profile_args={
+            "database": "iceberg",
+            "schema": "silver",
+            "http_scheme": "http",
+        },
+    ),
 )
 
-# Python function to execute
-def print_hello_python():
-    print("Hello from the Python Operator!")
+basic_cosmos_dag = DbtDag(
+    project_config=ProjectConfig("/opt/airflow/dags/dbt_project"),
+    profile_config=profile_config,
+    render_config=RenderConfig(
+        select=["game_list"]
+    ),
 
-# DAG Definition
-with DAG(
-    dag_id="hello_world_test",
-    start_date=datetime(2024, 1, 1),
-    schedule=None, # Trigger manually
+    operator_args={"install_deps": True},
+    schedule="@daily",
+    start_date=datetime(2023, 1, 1),
     catchup=False,
-    tags=["test", "debug"]
-) as dag:
-
-    clone_operator = DbtCloneLocalOperator(
-        profile_config=profile_config,
-        project_dir=DBT_PROJ_DIR,
-        task_id="debug",
-        dbt_cmd_flags=["debug"],
-        install_deps=True,
-        append_env=True,
-    )
+    dag_id="example",
+    default_args={"retries": 0},
+)
