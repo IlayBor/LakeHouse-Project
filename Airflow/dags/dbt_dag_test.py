@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from cosmos import DbtDag, ProjectConfig, ProfileConfig, RenderConfig
-from cosmos.profiles import TrinoLDAPProfileMapping
+from cosmos.profiles.trino import TrinoBaseProfileMapping
 from datetime import datetime
 
 # DEFAULT_DBT_ROOT_PATH = str(Path(__file__).parent/"dbt_project")
@@ -9,7 +9,7 @@ from datetime import datetime
 profile_config = ProfileConfig(
     profile_name="lakehouse_profile",
     target_name="dev",
-    profile_mapping=TrinoLDAPProfileMapping(
+    profile_mapping=TrinoBaseProfileMapping(
         conn_id="trino",
         profile_args={
             "database": "iceberg",
@@ -23,7 +23,7 @@ basic_cosmos_dag = DbtDag(
     project_config=ProjectConfig("/opt/airflow/dags/dbt_project"),
     profile_config=profile_config,
     render_config=RenderConfig(
-        select=["game_list"]
+        select=["+game_list"]
     ),
 
     operator_args={"install_deps": True},
