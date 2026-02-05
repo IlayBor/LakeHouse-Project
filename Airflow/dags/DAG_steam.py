@@ -18,7 +18,7 @@ profile_config = ProfileConfig(
         conn_id="trino",
         profile_args={
             "database": "iceberg",
-            "schema": "silver",
+            "schema": "gold",
             "http_scheme": "http",
         },
     ),
@@ -48,7 +48,7 @@ with DAG(
         project_config=ProjectConfig(DEFAULT_DBT_ROOT_PATH),
         profile_config=profile_config,
         render_config=RenderConfig(
-            select=["+game_list"]
+            select=["+fct_deals"]
         ),
         operator_args={"install_deps": True},
     )

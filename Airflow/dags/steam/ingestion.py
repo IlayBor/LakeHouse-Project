@@ -6,6 +6,9 @@ import boto3
 import time
 import json
 
+FOLDER_NAME = "raw/cheapshark_data"
+FILE_NAME = "deals"
+
 def load_json_deals_data():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     
@@ -27,7 +30,7 @@ def load_pages(s3, BUCKET_NAME, start, end = 0,):
         combined_data.extend(page_data)
         pages_counter += 1    
         if pages_counter >= 10:
-            upload_to_s3(s3, BUCKET_NAME, combined_data, f"raw/deals/{current_date.year}/{current_date.month}/{current_date.day}/deals{json_index}.json")
+            upload_to_s3(s3, BUCKET_NAME, combined_data, f"{FOLDER_NAME}/{current_date.year}/{current_date.month}/{current_date.day}/{FILE_NAME}-{json_index}.json")
             logging.info(f"Loaded batch {json_index}!")
             combined_data = []
             pages_counter = 0
@@ -36,7 +39,7 @@ def load_pages(s3, BUCKET_NAME, start, end = 0,):
 
     if combined_data:
         logging.info(f"Flushing remains.. {json_index}!")
-        upload_to_s3(s3, BUCKET_NAME, combined_data, f"raw/deals/{current_date.year}/{current_date.month}/{current_date.day}/deals{json_index}.json")
+        upload_to_s3(s3, BUCKET_NAME, combined_data, f"{FOLDER_NAME}/{current_date.year}/{current_date.month}/{current_date.day}/{FILE_NAME}-{json_index}.json")
 
 def yield_pages(start, end = 0):
     page = start

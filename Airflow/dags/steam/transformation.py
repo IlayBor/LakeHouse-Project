@@ -12,10 +12,10 @@ LAKEKEEPER_CLIENT_SECRET = "24342434"
 LAKEKEEPER_CATALOG_NAME = "lakekeeper_catalog" # Catalog name in DuckDB
 LAKEKEEPER_WAREHOUSE = "lakehouse_warehouse"
 TARGET_NAMESPACE = "bronze"
-TARGET_TABLE = "fct_sales"
+TARGET_TABLE = "cheapshark_data"
 TARGET_TABLE_PATH = LAKEKEEPER_CATALOG_NAME + '.' + TARGET_NAMESPACE + '.' + TARGET_TABLE
 
-SOURCE_FILE = "s3://warehouse/raw/deals/**/*.json"
+SOURCE_FILE = "s3://warehouse/raw/cheapshark_data/**/*.json"
 
 def transform_to_iceberg():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
