@@ -5,5 +5,5 @@ sources:
     schema: bronze
 
     tables:
-      - name: fct_sales
-        description: "steam deals"
+      - name: cheapshark_data
+        description: "steam cheapshark deals data"

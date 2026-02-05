@@ -1,3 +1,4 @@
 dbt-trino
 astronomer-cosmos
 apache-airflow-providers-trino
+duckdb
