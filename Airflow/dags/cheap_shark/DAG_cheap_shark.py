@@ -9,7 +9,7 @@ from cosmos.profiles.trino import TrinoBaseProfileMapping
 from cheap_shark.ingestion import load_json_deals_data
 from cheap_shark.transformation import transform_to_iceberg
 
-DEFAULT_DBT_ROOT_PATH = Path(__file__).parent/"dbt_project"
+DEFAULT_DBT_ROOT_PATH = Path(__file__).parent.parent/"dbt_project"
 
 profile_config = ProfileConfig(
     profile_name="lakehouse_profile",
