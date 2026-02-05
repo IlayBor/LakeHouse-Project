@@ -6,8 +6,8 @@ from airflow.operators.python import PythonOperator
 from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, RenderConfig
 from cosmos.profiles.trino import TrinoBaseProfileMapping
 
-from steam.ingestion import load_json_deals_data
-from steam.transformation import transform_to_iceberg
+from cheap_shark.ingestion import load_json_deals_data
+from cheap_shark.transformation import transform_to_iceberg
 
 DEFAULT_DBT_ROOT_PATH = Path(__file__).parent/"dbt_project"
 
@@ -26,7 +26,7 @@ profile_config = ProfileConfig(
 
 
 with DAG(
-    dag_id="steam_ingestion",
+    dag_id="cheap_shark_ingestion",
     schedule=None,
     start_date=datetime(2026, 1, 1),
     catchup=False,  
@@ -40,7 +40,12 @@ with DAG(
 
     convert_to_iceberg = PythonOperator(
         task_id="convert_to_iceberg",
-        python_callable=transform_to_iceberg
+        python_callable=transform_to_iceberg,
+        op_kwargs={
+            "SOURCE_FILE": "raw/cheapshark_data",
+            "TARGET_SCHEME": "bronze",
+            "TARGET_TABLE_NAME": "cheapshark_data"
+        }
     )
 
     dbt_modelling = DbtTaskGroup(

@@ -5,20 +5,20 @@ S3_CATALOG_NAME = "s3_catalog" # Catalog name in DuckDB
 S3_ENDPOINT = "minio:9000" 
 S3_ACCESS_KEY = "ilaybor"
 S3_SECRET_KEY = "24342434"
+S3_BUCKET = "warehouse"
 
 LAKEKEEPER_URI = "http://lakekeeper:8181" 
 LAKEKEEPER_CLIENT_ID = "ilaybor"
 LAKEKEEPER_CLIENT_SECRET = "24342434"
 LAKEKEEPER_CATALOG_NAME = "lakekeeper_catalog" # Catalog name in DuckDB
 LAKEKEEPER_WAREHOUSE = "lakehouse_warehouse"
-TARGET_NAMESPACE = "bronze"
-TARGET_TABLE = "cheapshark_data"
-TARGET_TABLE_PATH = LAKEKEEPER_CATALOG_NAME + '.' + TARGET_NAMESPACE + '.' + TARGET_TABLE
 
-SOURCE_FILE = "s3://warehouse/raw/cheapshark_data/**/*.json"
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-def transform_to_iceberg():
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+def transform_to_iceberg(SOURCE_FILE, TARGET_SCHEME, TARGET_TABLE_NAME):
+    
+    TARGET_TABLE_PATH = LAKEKEEPER_CATALOG_NAME + '.' + TARGET_SCHEME + '.' + TARGET_TABLE_NAME
+    logging.info(f"Source file:{SOURCE_FILE} Target Table Path: {TARGET_TABLE_PATH}")
 
     con = duckdb.connect()
 
@@ -62,11 +62,12 @@ def transform_to_iceberg():
         return 
     
     logging.info(f"Trying to create table...")
+    SOURCE_FILE_FULL_PATH = f's3://{S3_BUCKET}/{SOURCE_FILE}/**/*.json'
     try:
         query = f"""
             CREATE TABLE {TARGET_TABLE_PATH} AS 
             SELECT *, strftime(current_date, '%Y-%m-%d') as ingestion_date
-            FROM read_json_auto('{SOURCE_FILE}');
+            FROM read_json_auto('{SOURCE_FILE_FULL_PATH}');
             """
         con.sql(query)
         logging.info(f"Created table!")
@@ -75,7 +76,7 @@ def transform_to_iceberg():
             query = f"""
             INSERT INTO {TARGET_TABLE_PATH}
             SELECT *, strftime(current_date, '%Y-%m-%d') as ingestion_date
-            FROM read_json_auto('{SOURCE_FILE}');
+            FROM read_json_auto('{SOURCE_FILE_FULL_PATH}');
             """
             logging.warning(f"Table already exists... Inserting into it instead.")
             try:

@@ -38,7 +38,7 @@ def load_pages(s3, BUCKET_NAME, start, end = 0,):
         time.sleep(1.5)
 
     if combined_data:
-        logging.info(f"Flushing remains.. {json_index}!")
+        logging.info(f"Flushing remains...")
         upload_to_s3(s3, BUCKET_NAME, combined_data, f"{FOLDER_NAME}/{current_date.year}/{current_date.month}/{current_date.day}/{FILE_NAME}-{json_index}.json")
 
 def yield_pages(start, end = 0):
