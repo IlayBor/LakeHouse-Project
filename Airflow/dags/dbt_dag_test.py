@@ -4,7 +4,7 @@ from cosmos import DbtDag, ProjectConfig, ProfileConfig, RenderConfig
 from cosmos.profiles.trino import TrinoBaseProfileMapping
 from datetime import datetime
 
-# DEFAULT_DBT_ROOT_PATH = str(Path(__file__).parent/"dbt_project")
+DEFAULT_DBT_ROOT_PATH = Path(__file__).parent/"dbt_project"
 
 profile_config = ProfileConfig(
     profile_name="lakehouse_profile",
@@ -20,7 +20,7 @@ profile_config = ProfileConfig(
 )
 
 basic_cosmos_dag = DbtDag(
-    project_config=ProjectConfig("/opt/airflow/dags/dbt_project"),
+    project_config=ProjectConfig(DEFAULT_DBT_ROOT_PATH),
     profile_config=profile_config,
     render_config=RenderConfig(
         select=["+game_list"]
