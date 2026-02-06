@@ -51,9 +51,6 @@ def fetch_deals_pages(start_page, end_page):
             logging.info(f"Fetching page {current_page}")
             url = f"https://www.cheapshark.com/api/1.0/deals?storeID=1&pageNumber={current_page}"
             response = requests.get(url)
-
-            logging.error(response.headers.get("Retry-After"))
-
             response.raise_for_status()
 
             data = response.json()
@@ -67,6 +64,9 @@ def fetch_deals_pages(start_page, end_page):
             current_page +=1
 
         except requests.exceptions.RequestException as e:
+            if response.status_code == 429:
+                logging.error(f'Got timeout error, must wait :{response.headers.get("Retry-After")} seconds')
+                raise e
 
             logging.error(f"Got error on page {current_page}: {e}")
             break
