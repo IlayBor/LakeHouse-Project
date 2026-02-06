@@ -5,44 +5,28 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 
 def transform_to_iceberg(SOURCE_FILE, TARGET_SCHEME, TARGET_TABLE_NAME):
     con, LAKEKEEPER_CATALOG_NAME = connect_to_duckdb()
-    TARGET_TABLE_PATH = LAKEKEEPER_CATALOG_NAME + '.' + TARGET_SCHEME + '.' + TARGET_TABLE_NAME
-
-    logging.info(f"Trying to create table: {TARGET_TABLE_PATH} from file: {SOURCE_FILE}")
+    
     SOURCE_FILE_FULL_PATH = f's3://{SOURCE_FILE}/**/*.json'
+    TARGET_TABLE_PATH = LAKEKEEPER_CATALOG_NAME + '.' + TARGET_SCHEME + '.' + TARGET_TABLE_NAME
+    logging.info(f"Trying to create table: {TARGET_TABLE_PATH} from file: {SOURCE_FILE}")
+
     try:
         create_table(con, TARGET_TABLE_PATH)
-        logging.info(f"Created table!")
-        try: 
-            upsert_into_table(con, SOURCE_FILE_FULL_PATH, TARGET_TABLE_PATH)
-            logging.info(f"Inserted data!")
-        except Exception as e:
-            logging.error(f"Failed to insert into table after creation {TARGET_TABLE_PATH}: {e}")
-            raise e
+        logging.info("Table created / exists")
 
-    except Exception as e:
-        if "already exists" in str(e).lower():
-            logging.warning(f"Table already exists... Inserting into it instead.")
-            try:
-                upsert_into_table(con, SOURCE_FILE_FULL_PATH, TARGET_TABLE_PATH)
-                logging.info(f"Upserted data!")
-            except Exception as e:
-                logging.error(f"Failed to upsert into table {TARGET_TABLE_PATH}: {e}")
-                raise e
-        else:
-            logging.error(f"Failed To create table {TARGET_TABLE_PATH}: {e}")
-            raise e
-    
-    try:
+        upsert_into_table(con, SOURCE_FILE_FULL_PATH, TARGET_TABLE_PATH)
+        logging.info("Data upserted successfully.")
+
         count = con.sql(f"SELECT COUNT(*) FROM {TARGET_TABLE_PATH}").fetchone()[0]
         logging.info(f"Success! Table {TARGET_TABLE_PATH} has {count} rows")
-    except Exception as e:
-        logging.error(f"Failed to count rows: {e}")
-        raise e
 
+    except Exception as e:
+        logging.error(f"transformation to iceberg failed for table {TARGET_TABLE_PATH}: {e}")
+        raise e
 
 def create_table(con, TARGET_TABLE_PATH):
     create_statment = f"""
-        CREATE TABLE {TARGET_TABLE_PATH} (
+        CREATE TABLE IF NOT EXISTS {TARGET_TABLE_PATH} (
             internalName VARCHAR,
             title VARCHAR,
             metacriticLink VARCHAR,
