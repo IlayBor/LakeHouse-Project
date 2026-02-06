@@ -6,7 +6,7 @@ from airflow.operators.python import PythonOperator
 from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, RenderConfig
 from cosmos.profiles.trino import TrinoBaseProfileMapping
 
-from cheap_shark.ingestion import load_json_deals_data
+from cheap_shark.ingestion import load_cheapshark_pages
 from cheap_shark.transformation import transform_to_iceberg
 
 DEFAULT_DBT_ROOT_PATH = Path(__file__).parent.parent/"dbt_project"
@@ -34,8 +34,11 @@ with DAG(
 ) as dag:
 
     load_json = PythonOperator(
-        task_id="load_json",
-        python_callable=load_json_deals_data
+        task_id="load_json_deals",
+        python_callable=load_cheapshark_pages,
+        op_kwargs={
+            "start": 0
+        }
     ),
 
     convert_to_iceberg = PythonOperator(
