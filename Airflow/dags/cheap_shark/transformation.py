@@ -85,6 +85,7 @@ def upsert_into_table(con, SOURCE_FILE_FULL_PATH, TARGET_TABLE_PATH):
         con.begin()
         con.sql(remove_duplicates_statment)
         con.sql(insert_statment)
+        con.commit()
     except Exception as e:
         con.rollback()
         raise e 
