@@ -55,4 +55,4 @@ def connect_to_duckdb():
         logging.error(f"Failed to attach: {e}")
         raise e
     
-    return con
+    return con, LAKEKEEPER_CATALOG_NAME

@@ -37,7 +37,8 @@ with DAG(
         task_id="load_json_deals",
         python_callable=load_cheapshark_pages,
         op_kwargs={
-            "start": 0
+            "start": 0,
+            "end": 3
         }
     ),
 
