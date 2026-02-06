@@ -1,61 +1,74 @@
 from datetime import datetime
+from utils.utils import connect_to_s3
 
 import requests
 import logging
-import boto3
 import time
 import json
-
-MINIO_ENDPOINT = "http://minio:9000"
-ACCESS_KEY = "ilaybor" 
-SECRET_KEY = "24342434"
-BUCKET_NAME = "warehouse"
 
 LOAD_PATH = "raw/cheapshark_data"
 FILE_NAME = "deals"
 
-def load_cheapshark_pages(start, end = 0):
+BUCKET_NAME = "warehouse"
+
+def load_cheapshark_pages(start_page = 0, end_page = None):
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    s3 = boto3.client('s3',endpoint_url=MINIO_ENDPOINT,aws_access_key_id=ACCESS_KEY,aws_secret_access_key=SECRET_KEY)
+    s3 = connect_to_s3()
     
-    current_date = datetime.now()
-    batch_number = 10
+    ingestion_date = datetime.now()
+    max_pages_allowed_in_batch = 10
 
-    combined_data = [] 
-    pages_counter = 0 
-    load_file_index = 1
+    current_batch_data = [] 
+    pages_in_current_batch = 0 
+    file_index = 1
 
-    for page_data in pages_generator(start, end):
-        combined_data.extend(page_data)
-        pages_counter += 1    
-        if pages_counter >= batch_number:
-            upload_to_s3(s3, BUCKET_NAME, combined_data, f"{LOAD_PATH}/{current_date.year}/{current_date.month}/{current_date.day}/{FILE_NAME}_{load_file_index}.json")
-            logging.info(f"Loaded batch {load_file_index}!")
-            combined_data = []
-            pages_counter = 0
-            load_file_index += 1
-        time.sleep(1.5)
+    for page_data in fetch_deals_pages(start_page, end_page):
+        current_batch_data.extend(page_data)
+        pages_in_current_batch += 1
 
-    if combined_data:
+        if pages_in_current_batch >= max_pages_allowed_in_batch:
+            upload_to_s3(s3, BUCKET_NAME, current_batch_data, f"{LOAD_PATH}/{ingestion_date.strftime("%Y/%m/%d")}/{FILE_NAME}_{file_index}.json")
+            logging.info(f"Loaded batch {file_index}")
+            
+            current_batch_data = []
+            pages_in_current_batch = 0
+            file_index += 1
+
+    if current_batch_data:
         logging.info(f"Flushing remains...")
-        upload_to_s3(s3, BUCKET_NAME, combined_data, f"{LOAD_PATH}/{current_date.year}/{current_date.month}/{current_date.day}/{FILE_NAME}_{load_file_index}.json")
+        upload_to_s3(s3, BUCKET_NAME, current_batch_data, f"{LOAD_PATH}/{ingestion_date.strftime("%Y/%m/%d")}/{FILE_NAME}_{file_index}.json")
 
-def pages_generator(start, end = 0):
-    page = start
+    logging.info(f"Ingestion completed.")
+
+def fetch_deals_pages(start_page, end_page):
+    current_page = start_page
     while True:
-        logging.info(f"Fetching page {page}")
-        url = f"https://www.cheapshark.com/api/1.0/deals?storeID=1&pageNumber={page}"
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            data = response.json()
-            yield data
-        except requests.exceptions.RequestException as err:
-            logging.error(f"Ended on page {page} - {err}")
+        if end_page is not None and current_page >= end_page:
+            logging.info(f"Finished loading at page {current_page}")
             break
-        
-        page += 1
-        if end and page >= end:
+
+        try:
+            logging.info(f"Fetching page {current_page}")
+            url = f"https://www.cheapshark.com/api/1.0/deals?storeID=1&pageNumber={current_page}"
+            response = requests.get(url)
+
+            logging.error(response.headers.get("Retry-After"))
+
+            response.raise_for_status()
+
+            data = response.json()
+            if not data:
+                logging.info("Empty page received. Stopping fetch.")
+                break
+
+            yield data
+
+            time.sleep(1.5)
+            current_page +=1
+
+        except requests.exceptions.RequestException as e:
+
+            logging.error(f"Got error on page {current_page}: {e}")
             break
 
 def upload_to_s3(s3, bucket_name, data, key):

@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from datetime import datetime
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.python import PythonOperator
 from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, RenderConfig
 from cosmos.profiles.trino import TrinoBaseProfileMapping
 
@@ -36,10 +36,10 @@ with DAG(
     load_json = PythonOperator(
         task_id="load_json_deals",
         python_callable=load_cheapshark_pages,
-        op_kwargs={
-            "start": 0,
-            "end": 3
-        }
+        # op_kwargs={
+        #     "start_page": 0,
+        #     "end_page": 3
+        # }
     ),
 
     convert_to_iceberg = PythonOperator(

@@ -1,5 +1,6 @@
 import duckdb
 import logging
+import boto3
 
 # returns connection to the lakehouse using duckdb
 def connect_to_duckdb():
@@ -56,3 +57,12 @@ def connect_to_duckdb():
         raise e
     
     return con, LAKEKEEPER_CATALOG_NAME
+
+# returns connection to the minio
+def connect_to_s3():
+    MINIO_ENDPOINT = "http://minio:9000"
+    ACCESS_KEY = "ilaybor" 
+    SECRET_KEY = "24342434"
+    
+    s3 = boto3.client('s3',endpoint_url=MINIO_ENDPOINT,aws_access_key_id=ACCESS_KEY,aws_secret_access_key=SECRET_KEY)
+    return s3
