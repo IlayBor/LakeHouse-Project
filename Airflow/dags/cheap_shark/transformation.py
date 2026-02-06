@@ -3,30 +3,30 @@ import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-def transform_to_iceberg(SOURCE_FILE, TARGET_SCHEME, TARGET_TABLE_NAME):
-    con, LAKEKEEPER_CATALOG_NAME = connect_to_duckdb()
+def transform_to_iceberg(source_file, target_scheme, target_table_name):
+    con, lakekeeper_catalog_name = connect_to_duckdb()
     
-    SOURCE_FILE_FULL_PATH = f's3://{SOURCE_FILE}/**/*.json'
-    TARGET_TABLE_PATH = LAKEKEEPER_CATALOG_NAME + '.' + TARGET_SCHEME + '.' + TARGET_TABLE_NAME
-    logging.info(f"Trying to create table: {TARGET_TABLE_PATH} from file: {SOURCE_FILE}")
+    source_file_path = f's3://{source_file}/**/*.json'
+    target_table_path = lakekeeper_catalog_name + '.' + target_scheme + '.' + target_table_name
+    logging.info(f"Trying to create table: {target_table_path} from file: {source_file}")
 
     try:
-        create_table(con, TARGET_TABLE_PATH)
+        create_table(con, target_table_path)
         logging.info("Table created / exists")
 
-        upsert_into_table(con, SOURCE_FILE_FULL_PATH, TARGET_TABLE_PATH)
+        upsert_into_table(con, source_file_path, target_table_path)
         logging.info("Data upserted successfully.")
 
-        count = con.sql(f"SELECT COUNT(*) FROM {TARGET_TABLE_PATH}").fetchone()[0]
-        logging.info(f"Success! Table {TARGET_TABLE_PATH} has {count} rows")
+        count = con.sql(f"SELECT COUNT(*) FROM {target_table_path}").fetchone()[0]
+        logging.info(f"Success! Table {target_table_path} has {count} rows")
 
     except Exception as e:
-        logging.error(f"transformation to iceberg failed for table {TARGET_TABLE_PATH}: {e}")
+        logging.error(f"transformation to iceberg failed for table {target_table_path}: {e}")
         raise e
 
-def create_table(con, TARGET_TABLE_PATH):
+def create_table(con, target_table_path):
     create_statment = f"""
-        CREATE TABLE IF NOT EXISTS {TARGET_TABLE_PATH} (
+        CREATE TABLE IF NOT EXISTS {target_table_path} (
             internalName VARCHAR,
             title VARCHAR,
             metacriticLink VARCHAR,
@@ -51,17 +51,17 @@ def create_table(con, TARGET_TABLE_PATH):
     """
     con.sql(create_statment)
 
-def upsert_into_table(con, SOURCE_FILE_FULL_PATH, TARGET_TABLE_PATH):
+def upsert_into_table(con, source_file_path, target_table_path):
     insert_statment = f"""
-        INSERT INTO {TARGET_TABLE_PATH}
+        INSERT INTO {target_table_path}
         SELECT *, strftime(current_date, '%Y-%m-%d') as ingestion_date
-        FROM read_json_auto('{SOURCE_FILE_FULL_PATH}');
+        FROM read_json_auto('{source_file_path}');
     """
     remove_duplicates_statment = f"""
-        DELETE FROM {TARGET_TABLE_PATH}
+        DELETE FROM {target_table_path}
         WHERE (gameID, ingestion_date) IN (
             SELECT gameID, current_date
-            FROM read_json_auto('{SOURCE_FILE_FULL_PATH}')
+            FROM read_json_auto('{source_file_path}')
         )
     """
 

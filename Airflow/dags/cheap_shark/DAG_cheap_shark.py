@@ -46,9 +46,9 @@ with DAG(
         task_id="convert_to_iceberg",
         python_callable=transform_to_iceberg,
         op_kwargs={
-            "SOURCE_FILE": "warehouse/raw/cheapshark_data",
-            "TARGET_SCHEME": "bronze",
-            "TARGET_TABLE_NAME": "cheapshark_data"
+            "source_file": "warehouse/raw/cheapshark_data",
+            "target_scheme": "bronze",
+            "target_table_name": "cheapshark_data"
         }
     )
 
