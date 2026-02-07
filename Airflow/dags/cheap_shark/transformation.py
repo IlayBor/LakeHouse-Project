@@ -3,11 +3,11 @@ import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-def transform_to_iceberg(source_file, target_scheme, target_table_name):
+def transform_to_iceberg(source_file, target_table_scheme, target_table_name):
     con, lakekeeper_catalog_name = connect_to_duckdb()
     
     source_file_path = f's3://{source_file}/**/*.json'
-    target_table_path = lakekeeper_catalog_name + '.' + target_scheme + '.' + target_table_name
+    target_table_path = lakekeeper_catalog_name + '.' + target_table_scheme + '.' + target_table_name
     logging.info(f"Trying to create table: {target_table_path} from file: {source_file}")
 
     try:
