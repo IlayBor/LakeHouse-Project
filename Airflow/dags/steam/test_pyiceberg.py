@@ -14,6 +14,7 @@ from pyiceberg.types import (
 )
 import requests
 import pyarrow as pa
+import pandas as pd
 
 
 catalog = pyiceberg.catalog.rest.RestCatalog(
@@ -189,13 +190,15 @@ iceberg_table = catalog.create_table_if_not_exists(
   schema=schema
 )
 
+arrow_schema = iceberg_table.schema().as_arrow()
+print(arrow_schema)
+
 url = "https://store.steampowered.com/api/appdetails?appids=3900"
 response = requests.get(url)
 response.raise_for_status()
 data = response.json()["3900"]["data"]
+
 arrow_schema = schema.as_arrow()
 pa_table = pa.Table.from_pylist([data], schema=arrow_schema)
-print(pa_table)
-
-table = catalog.load_table('bronze.test4')
-table.append(pa_table)
+print(pa_table.slice(0, 1).to_pandas().T)
+iceberg_table.append(pa_table)
