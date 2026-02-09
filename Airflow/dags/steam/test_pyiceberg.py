@@ -23,182 +23,188 @@ catalog = pyiceberg.catalog.rest.RestCatalog(
     warehouse="lakehouse_warehouse",
 )
 
-schema = Schema(
-    NestedField(1, "type", StringType(), required=False),
-    NestedField(2, "name", StringType(), required=False),
-    NestedField(3, "steam_appid", LongType(), required=True),
-    NestedField(4, "required_age", IntegerType(), required=False),
-    NestedField(5, "is_free", BooleanType(), required=False),
-    NestedField(6, "controller_support", StringType(), required=False),
-    NestedField(7, "dlc", ListType(element_id=8, element=LongType(), element_required=False), required=False),
-    NestedField(9, "detailed_description", StringType(), required=False),
-    NestedField(10, "about_the_game", StringType(), required=False),
-    NestedField(11, "short_description", StringType(), required=False),
-    NestedField(12, "fullgame", ListType(
-        element_id=13, 
-        element=StructType(
-            NestedField(14, "appid", IntegerType(), required=False),
-            NestedField(15, "name", StringType(), required=False)
-        ), 
-        element_required=False
-    ), required=False),
-    NestedField(16, "supported_languages", StringType(), required=False),
-    NestedField(17, "header_image", StringType(), required=False),
-    NestedField(18, "website", StringType(), required=False),
-    NestedField(19, "pc_requirements", StructType(
-        NestedField(20, "minimum", StringType(), required=False),
-        NestedField(21, "recommended", StringType(), required=False)
-    ), required=False),
-    NestedField(22, "mac_requirements", StructType(
-        NestedField(23, "minimum", StringType(), required=False),
-        NestedField(24, "recommended", StringType(), required=False)
-    ), required=False),
-    NestedField(25, "linux_requirements", StructType(
-        NestedField(26, "minimum", StringType(), required=False),
-        NestedField(27, "recommended", StringType(), required=False)
-    ), required=False),
-    NestedField(28, "legal_notice", StringType(), required=False),
-    NestedField(29, "developers", ListType(element_id=30, element=StringType(), element_required=False), required=False),
-    NestedField(31, "publishers", ListType(element_id=32, element=StringType(), element_required=False), required=False),
-    NestedField(33, "demos", ListType(
-        element_id=34, 
-        element=StructType(
-            NestedField(35, "appid", LongType(), required=False),
-            NestedField(36, "description", StringType(), required=False)
-        ), 
-        element_required=False
-    ), required=False),
-    NestedField(37, "price_overview", StructType(
-        NestedField(38, "currency", StringType(), required=False),
-        NestedField(39, "initial", DoubleType(), required=False),
-        NestedField(40, "final", DoubleType(), required=False),
-        NestedField(41, "discount_percent", DoubleType(), required=False),
-        NestedField(42, "initial_formatted", StringType(), required=False),
-        NestedField(43, "final_formatted", StringType(), required=False)
-    ), required=False),
-    NestedField(44, "packages", ListType(element_id=45, element=LongType(), element_required=False), required=False),
-    NestedField(46, "package_groups", ListType(
-        element_id=47, 
-        element=StructType(
-            NestedField(48, "name", StringType(), required=False),
-            NestedField(49, "title", StringType(), required=False),
-            NestedField(50, "description", StringType(), required=False),
-            NestedField(51, "selection_text", StringType(), required=False),
-            NestedField(52, "save_text", StringType(), required=False),
-            NestedField(53, "display_type", IntegerType(), required=False),
-            NestedField(54, "is_recurring_subscription", StringType(), required=False),
-            NestedField(55, "subs", ListType(
-                element_id=56, 
-                element=StructType(
-                    NestedField(57, "packageid", LongType(), required=False),
-                    NestedField(58, "percent_savings_text", StringType(), required=False),
-                    NestedField(59, "percent_savings", DoubleType(), required=False),
-                    NestedField(60, "option_text", StringType(), required=False),
-                    NestedField(61, "option_description", StringType(), required=False),
-                    NestedField(62, "can_get_free_license", StringType(), required=False),
-                    NestedField(63, "is_free_license", BooleanType(), required=False),
-                    NestedField(64, "price_in_cents_with_discount", LongType(), required=False)
-                ), 
-                element_required=False
-            ), required=False)
-        ), 
-        element_required=False
-    ), required=False),
-    NestedField(65, "platforms", StructType(
-        NestedField(66, "windows", BooleanType(), required=False),
-        NestedField(67, "mac", BooleanType(), required=False),
-        NestedField(68, "linux", BooleanType(), required=False)
-    ), required=False),
-    NestedField(69, "metacritic", StructType(
-        NestedField(70, "score", IntegerType(), required=False),
-        NestedField(71, "url", StringType(), required=False)
-    ), required=False),
-    NestedField(72, "categories", ListType(
-        element_id=73, 
-        element=StructType(
-            NestedField(74, "id", LongType(), required=False),
-            NestedField(75, "description", StringType(), required=False)
-        ), 
-        element_required=False
-    ), required=False),
-    NestedField(76, "genres", ListType(
-        element_id=77, 
-        element=StructType(
-            NestedField(78, "id", StringType(), required=False),
-            NestedField(79, "description", StringType(), required=False)
-        ), 
-        element_required=False
-    ), required=False),
-    NestedField(80, "screenshots", ListType(
-        element_id=81, 
-        element=StructType(
-            NestedField(82, "id", LongType(), required=False),
-            NestedField(83, "path_thumbnail", StringType(), required=False),
-            NestedField(84, "path_full", StringType(), required=False)
-        ), 
-        element_required=False
-    ), required=False),
-    NestedField(85, "movies", ListType(
-        element_id=86, 
-        element=StructType(
-            NestedField(87, "id", LongType(), required=False),
-            NestedField(88, "name", StringType(), required=False),
-            NestedField(89, "thumbnail", StringType(), required=False),
-            NestedField(90, "webm", StructType(
-                NestedField(91, "480", StringType(), required=False),
-                NestedField(92, "max", StringType(), required=False)
-            ), required=False),
-            NestedField(93, "mp4", StructType(
-                NestedField(94, "480", StringType(), required=False),
-                NestedField(95, "max", StringType(), required=False)
-            ), required=False),
-            NestedField(96, "highlight", BooleanType(), required=False)
-        ), 
-        element_required=False
-    ), required=False),
-    NestedField(97, "recommendations", StructType(
-        NestedField(98, "total", IntegerType(), required=False)
-    ), required=False),
-    NestedField(99, "achievements", StructType(
-        NestedField(100, "total", IntegerType(), required=False),
-        NestedField(101, "highlighted", ListType(
-            element_id=102, 
-            element=StructType(
-                NestedField(103, "name", StringType(), required=False),
-                NestedField(104, "path", StringType(), required=False)
-            ), 
-            element_required=False
-        ), required=False)
-    ), required=False),
-    NestedField(105, "release_date", StructType(
-        NestedField(106, "coming_soon", BooleanType(), required=False),
-        NestedField(107, "date", StringType(), required=False)
-    ), required=False),
-    NestedField(108, "support_info", StructType(
-        NestedField(109, "url", StringType(), required=False),
-        NestedField(110, "email", StringType(), required=False)
-    ), required=False),
-    NestedField(111, "background", StringType(), required=False),
-    NestedField(112, "content_descriptors", StructType(
-        NestedField(113, "ids", ListType(element_id=114, element=LongType(), element_required=False), required=False),
-        NestedField(115, "notes", StringType(), required=False)
-    ), required=False)
-)
+import pyarrow as pa
+
+schema = pa.schema([
+    pa.field("type", pa.string(), nullable=True),
+    pa.field("name", pa.string(), nullable=True),
+    pa.field("steam_appid", pa.int64(), nullable=False),
+    pa.field("required_age", pa.int32(), nullable=True),
+    pa.field("is_free", pa.bool_(), nullable=True),
+    pa.field("controller_support", pa.string(), nullable=True),
+    
+    # List of Longs
+    pa.field("dlc", pa.list_(pa.int64()), nullable=True),
+    
+    pa.field("detailed_description", pa.string(), nullable=True),
+    pa.field("about_the_game", pa.string(), nullable=True),
+    pa.field("short_description", pa.string(), nullable=True),
+    
+    # List of Structs
+    pa.field("fullgame", pa.list_(
+        pa.struct([
+            pa.field("appid", pa.int32(), nullable=True),
+            pa.field("name", pa.string(), nullable=True)
+        ])
+    ), nullable=True),
+    
+    pa.field("supported_languages", pa.string(), nullable=True),
+    pa.field("header_image", pa.string(), nullable=True),
+    pa.field("website", pa.string(), nullable=True),
+    
+    # Structs
+    pa.field("pc_requirements", pa.struct([
+        pa.field("minimum", pa.string(), nullable=True),
+        pa.field("recommended", pa.string(), nullable=True)
+    ]), nullable=True),
+    
+    pa.field("mac_requirements", pa.struct([
+        pa.field("minimum", pa.string(), nullable=True),
+        pa.field("recommended", pa.string(), nullable=True)
+    ]), nullable=True),
+    
+    pa.field("linux_requirements", pa.struct([
+        pa.field("minimum", pa.string(), nullable=True),
+        pa.field("recommended", pa.string(), nullable=True)
+    ]), nullable=True),
+    
+    pa.field("legal_notice", pa.string(), nullable=True),
+    pa.field("developers", pa.list_(pa.string()), nullable=True),
+    pa.field("publishers", pa.list_(pa.string()), nullable=True),
+    
+    pa.field("demos", pa.list_(
+        pa.struct([
+            pa.field("appid", pa.int64(), nullable=True),
+            pa.field("description", pa.string(), nullable=True)
+        ])
+    ), nullable=True),
+    
+    pa.field("price_overview", pa.struct([
+        pa.field("currency", pa.string(), nullable=True),
+        pa.field("initial", pa.float64(), nullable=True),
+        pa.field("final", pa.float64(), nullable=True),
+        pa.field("discount_percent", pa.float64(), nullable=True),
+        pa.field("initial_formatted", pa.string(), nullable=True),
+        pa.field("final_formatted", pa.string(), nullable=True)
+    ]), nullable=True),
+    
+    pa.field("packages", pa.list_(pa.int64()), nullable=True),
+    
+    pa.field("package_groups", pa.list_(
+        pa.struct([
+            pa.field("name", pa.string(), nullable=True),
+            pa.field("title", pa.string(), nullable=True),
+            pa.field("description", pa.string(), nullable=True),
+            pa.field("selection_text", pa.string(), nullable=True),
+            pa.field("save_text", pa.string(), nullable=True),
+            pa.field("display_type", pa.int32(), nullable=True),
+            pa.field("is_recurring_subscription", pa.string(), nullable=True),
+            pa.field("subs", pa.list_(
+                pa.struct([
+                    pa.field("packageid", pa.int64(), nullable=True),
+                    pa.field("percent_savings_text", pa.string(), nullable=True),
+                    pa.field("percent_savings", pa.float64(), nullable=True),
+                    pa.field("option_text", pa.string(), nullable=True),
+                    pa.field("option_description", pa.string(), nullable=True),
+                    pa.field("can_get_free_license", pa.string(), nullable=True),
+                    pa.field("is_free_license", pa.bool_(), nullable=True),
+                    pa.field("price_in_cents_with_discount", pa.int64(), nullable=True)
+                ])
+            ), nullable=True)
+        ])
+    ), nullable=True),
+    
+    pa.field("platforms", pa.struct([
+        pa.field("windows", pa.bool_(), nullable=True),
+        pa.field("mac", pa.bool_(), nullable=True),
+        pa.field("linux", pa.bool_(), nullable=True)
+    ]), nullable=True),
+    
+    pa.field("metacritic", pa.struct([
+        pa.field("score", pa.int32(), nullable=True),
+        pa.field("url", pa.string(), nullable=True)
+    ]), nullable=True),
+    
+    pa.field("categories", pa.list_(
+        pa.struct([
+            pa.field("id", pa.int64(), nullable=True),
+            pa.field("description", pa.string(), nullable=True)
+        ])
+    ), nullable=True),
+    
+    pa.field("genres", pa.list_(
+        pa.struct([
+            pa.field("id", pa.string(), nullable=True),
+            pa.field("description", pa.string(), nullable=True)
+        ])
+    ), nullable=True),
+    
+    pa.field("screenshots", pa.list_(
+        pa.struct([
+            pa.field("id", pa.int64(), nullable=True),
+            pa.field("path_thumbnail", pa.string(), nullable=True),
+            pa.field("path_full", pa.string(), nullable=True)
+        ])
+    ), nullable=True),
+    
+    pa.field("movies", pa.list_(
+        pa.struct([
+            pa.field("id", pa.int64(), nullable=True),
+            pa.field("name", pa.string(), nullable=True),
+            pa.field("thumbnail", pa.string(), nullable=True),
+            pa.field("webm", pa.struct([
+                pa.field("480", pa.string(), nullable=True),
+                pa.field("max", pa.string(), nullable=True)
+            ]), nullable=True),
+            pa.field("mp4", pa.struct([
+                pa.field("480", pa.string(), nullable=True),
+                pa.field("max", pa.string(), nullable=True)
+            ]), nullable=True),
+            pa.field("highlight", pa.bool_(), nullable=True)
+        ])
+    ), nullable=True),
+    
+    pa.field("recommendations", pa.struct([
+        pa.field("total", pa.int32(), nullable=True)
+    ]), nullable=True),
+    
+    pa.field("achievements", pa.struct([
+        pa.field("total", pa.int32(), nullable=True),
+        pa.field("highlighted", pa.list_(
+            pa.struct([
+                pa.field("name", pa.string(), nullable=True),
+                pa.field("path", pa.string(), nullable=True)
+            ])
+        ), nullable=True)
+    ]), nullable=True),
+    
+    pa.field("release_date", pa.struct([
+        pa.field("coming_soon", pa.bool_(), nullable=True),
+        pa.field("date", pa.string(), nullable=True)
+    ]), nullable=True),
+    
+    pa.field("support_info", pa.struct([
+        pa.field("url", pa.string(), nullable=True),
+        pa.field("email", pa.string(), nullable=True)
+    ]), nullable=True),
+    
+    pa.field("background", pa.string(), nullable=True),
+    
+    pa.field("content_descriptors", pa.struct([
+        pa.field("ids", pa.list_(pa.int64()), nullable=True),
+        pa.field("notes", pa.string(), nullable=True)
+    ]), nullable=True)
+])
 
 iceberg_table = catalog.create_table_if_not_exists(
   identifier='bronze.test4',
   schema=schema
 )
 
-arrow_schema = iceberg_table.schema().as_arrow()
-print(arrow_schema)
-
 url = "https://store.steampowered.com/api/appdetails?appids=3900"
 response = requests.get(url)
 response.raise_for_status()
 data = response.json()["3900"]["data"]
 
-arrow_schema = schema.as_arrow()
-pa_table = pa.Table.from_pylist([data], schema=arrow_schema)
-print(pa_table.slice(0, 1).to_pandas().T)
+pa_table = pa.Table.from_pylist([data], schema=schema)
 iceberg_table.append(pa_table)
