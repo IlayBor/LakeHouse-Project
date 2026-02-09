@@ -25,7 +25,6 @@ profile_config = ProfileConfig(
     ),
 )
 
-
 with DAG(
     dag_id="cheap_shark_ingestion",
     schedule=None,
