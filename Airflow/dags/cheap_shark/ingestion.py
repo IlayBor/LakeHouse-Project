@@ -37,7 +37,6 @@ def load_cheapshark_pages(start_page=0, end_page=None):
 
     if current_batch_data:
         logging.info(f"Flushing remains...")
-        
         with s3fs.open(f"{PATH}/{ingestion_date.strftime('%Y/%m/%d')}/{FILE_NAME}_{file_index}.json", "w") as f:
             json.dump(current_batch_data, f)
 
