@@ -7,9 +7,9 @@ from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, RenderConfig
 from cosmos.profiles.trino import TrinoBaseProfileMapping
 
 from cheap_shark.ingestion import load_cheapshark_pages
-from cheap_shark.transformation import transform_to_iceberg
+from cheap_shark.transformation import transform_to_iceberg2
 
-DEFAULT_DBT_ROOT_PATH = Path(__file__).parent.parent/"dbt_project"
+DEFAULT_DBT_ROOT_PATH = Path(__file__).parent.parent / "dbt_project"
 
 profile_config = ProfileConfig(
     profile_name="lakehouse_profile",
@@ -29,38 +29,30 @@ with DAG(
     dag_id="cheap_shark_ingestion",
     schedule=None,
     start_date=datetime(2026, 1, 1),
-    catchup=False,  
+    catchup=False,
     tags=["steam-etl"],
 ) as dag:
-
     load_json = PythonOperator(
         task_id="load_json_deals",
         python_callable=load_cheapshark_pages,
-        # op_kwargs={
-        #     "start_page": 0,
-        #     "end_page": 3
-        # }
-    ),
+        op_kwargs={"start_page": 0, "end_page": 5},
+    )
 
     convert_to_iceberg = PythonOperator(
         task_id="convert_to_iceberg",
-        python_callable=transform_to_iceberg,
+        python_callable=transform_to_iceberg2,
         op_kwargs={
             "source_file": "warehouse/raw/cheapshark_data",
-            "target_scheme": "bronze",
-            "target_table_name": "cheapshark_data"
-        }
+            "target_table": "bronze.cheapshark_data",
+        },
     )
 
     dbt_modelling = DbtTaskGroup(
         group_id="dbt_transform",
         project_config=ProjectConfig(DEFAULT_DBT_ROOT_PATH),
         profile_config=profile_config,
-        render_config=RenderConfig(
-            select=["+fct_deals"]
-        ),
+        render_config=RenderConfig(select=["+fct_deals"]),
         operator_args={"install_deps": True},
     )
 
     load_json >> convert_to_iceberg >> dbt_modelling
-

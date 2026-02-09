@@ -1,5 +1,5 @@
 from datetime import datetime
-from utils.utils import connect_to_s3
+from common.connections import connect_to_s3
 
 import requests
 import logging
@@ -11,34 +11,49 @@ FILE_NAME = "deals"
 
 BUCKET_NAME = "warehouse"
 
-def load_cheapshark_pages(start_page = 0, end_page = None):
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+def load_cheapshark_pages(start_page=0, end_page=None):
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
     s3 = connect_to_s3()
-    
+
     ingestion_date = datetime.now()
     max_pages_allowed_in_batch = 10
 
-    current_batch_data = [] 
-    pages_in_current_batch = 0 
+    current_batch_data = []
+    pages_in_current_batch = 0
     file_index = 1
 
     for page_data in fetch_deals_pages(start_page, end_page):
         current_batch_data.extend(page_data)
         pages_in_current_batch += 1
-
+        print(ingestion_date)
         if pages_in_current_batch >= max_pages_allowed_in_batch:
-            upload_to_s3(s3, BUCKET_NAME, current_batch_data, f"{LOAD_PATH}/{ingestion_date.strftime("%Y/%m/%d")}/{FILE_NAME}_{file_index}.json")
+            upload_to_s3(
+                s3,
+                BUCKET_NAME,
+                current_batch_data,
+                f"{LOAD_PATH}/{ingestion_date.strftime('%Y/%m/%d')}/{FILE_NAME}_{file_index}.json",
+            )
             logging.info(f"Loaded batch {file_index}")
-            
+
             current_batch_data = []
             pages_in_current_batch = 0
             file_index += 1
 
     if current_batch_data:
         logging.info(f"Flushing remains...")
-        upload_to_s3(s3, BUCKET_NAME, current_batch_data, f"{LOAD_PATH}/{ingestion_date.strftime("%Y/%m/%d")}/{FILE_NAME}_{file_index}.json")
+        upload_to_s3(
+            s3,
+            BUCKET_NAME,
+            current_batch_data,
+            f"{LOAD_PATH}/{ingestion_date.strftime('%Y/%m/%d')}/{FILE_NAME}_{file_index}.json",
+        )
 
     logging.info(f"Ingestion completed.")
+
 
 def fetch_deals_pages(start_page, end_page):
     current_page = start_page
@@ -60,24 +75,23 @@ def fetch_deals_pages(start_page, end_page):
 
             yield data
 
-            time.sleep(1.5)
-            current_page +=1
+            time.sleep(1.8)
+            current_page += 1
 
         except requests.exceptions.RequestException as e:
             if response.status_code == 429:
-                logging.error(f'Got timeout error, must wait :{response.headers.get("Retry-After")} seconds')
+                logging.error(
+                    f"Got timeout error, must wait :{response.headers.get('Retry-After')} seconds"
+                )
                 raise e
 
             logging.error(f"Got error on page {current_page}: {e}")
             break
 
+
 def upload_to_s3(s3, bucket_name, data, key):
     try:
-        s3.put_object(
-            Bucket=bucket_name,
-            Key=key,
-            Body= json.dumps(data)
-        )
+        s3.put_object(Bucket=bucket_name, Key=key, Body=json.dumps(data))
         logging.info("Uploaded data successfuly!")
     except Exception as e:
         logging.error(f"Couldnt upload to s3: {e}")
