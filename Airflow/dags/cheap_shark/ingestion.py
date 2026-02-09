@@ -1,23 +1,20 @@
 from datetime import datetime
-from common.connections import connect_to_s3
+from common.connections import s3fs
 
 import requests
 import logging
 import time
 import json
 
-LOAD_PATH = "raw/cheapshark_data"
+
+PATH = "warehouse/raw/cheapshark_data"
 FILE_NAME = "deals"
-
-BUCKET_NAME = "warehouse"
-
 
 def load_cheapshark_pages(start_page=0, end_page=None):
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
-    s3 = connect_to_s3()
 
     ingestion_date = datetime.now()
     max_pages_allowed_in_batch = 10
@@ -30,12 +27,8 @@ def load_cheapshark_pages(start_page=0, end_page=None):
         current_batch_data.extend(page_data)
         pages_in_current_batch += 1
         if pages_in_current_batch >= max_pages_allowed_in_batch:
-            upload_to_s3(
-                s3,
-                BUCKET_NAME,
-                current_batch_data,
-                f"{LOAD_PATH}/{ingestion_date.strftime('%Y/%m/%d')}/{FILE_NAME}_{file_index}.json",
-            )
+            with s3fs.open(f"{PATH}/{ingestion_date.strftime('%Y/%m/%d')}/{FILE_NAME}_{file_index}.json", "w") as f:
+                json.dump(current_batch_data, f)
             logging.info(f"Loaded batch {file_index}")
 
             current_batch_data = []
@@ -44,12 +37,9 @@ def load_cheapshark_pages(start_page=0, end_page=None):
 
     if current_batch_data:
         logging.info(f"Flushing remains...")
-        upload_to_s3(
-            s3,
-            BUCKET_NAME,
-            current_batch_data,
-            f"{LOAD_PATH}/{ingestion_date.strftime('%Y/%m/%d')}/{FILE_NAME}_{file_index}.json",
-        )
+        
+        with s3fs.open(f"{PATH}/{ingestion_date.strftime('%Y/%m/%d')}/{FILE_NAME}_{file_index}.json", "w") as f:
+            json.dump(current_batch_data, f)
 
     logging.info(f"Ingestion completed.")
 
@@ -87,11 +77,3 @@ def fetch_deals_pages(start_page, end_page):
             logging.error(f"Got error on page {current_page}: {e}")
             break
 
-
-def upload_to_s3(s3, bucket_name, data, key):
-    try:
-        s3.put_object(Bucket=bucket_name, Key=key, Body=json.dumps(data))
-        logging.info("Uploaded data successfuly!")
-    except Exception as e:
-        logging.error(f"Couldnt upload to s3: {e}")
-        raise e
