@@ -29,7 +29,6 @@ def load_cheapshark_pages(start_page=0, end_page=None):
     for page_data in fetch_deals_pages(start_page, end_page):
         current_batch_data.extend(page_data)
         pages_in_current_batch += 1
-        print(ingestion_date)
         if pages_in_current_batch >= max_pages_allowed_in_batch:
             upload_to_s3(
                 s3,

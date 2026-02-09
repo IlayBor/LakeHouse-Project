@@ -6,16 +6,17 @@ from datetime import datetime
 import json
 
 
-def transform_to_iceberg(
+def upsert_iceberg_table(
     model: BaseModel, folder_path: str, table_identifier: str, primary_key: list[str]
 ) -> None:
+
     today = datetime.now().strftime("%Y/%m/%d")
     schema = get_pyarrow_schema(model)
 
     iceberg_table = catalog.create_table_if_not_exists(
         identifier=table_identifier, schema=schema
     )
-
+    
     for path in s3fs.glob(f"{folder_path}/{today}/*.json"):
         with s3fs.open(path) as file:
             data = json.load(file)

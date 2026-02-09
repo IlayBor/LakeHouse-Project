@@ -7,7 +7,8 @@ from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, RenderConfig
 from cosmos.profiles.trino import TrinoBaseProfileMapping
 
 from cheap_shark.ingestion import load_cheapshark_pages
-from cheap_shark.transformation import transform_to_iceberg2
+from common.transform import upsert_iceberg_table
+from cheap_shark.model import GameDeal
 
 DEFAULT_DBT_ROOT_PATH = Path(__file__).parent.parent / "dbt_project"
 
@@ -38,12 +39,14 @@ with DAG(
         op_kwargs={"start_page": 0, "end_page": 5},
     )
 
-    convert_to_iceberg = PythonOperator(
-        task_id="convert_to_iceberg",
-        python_callable=transform_to_iceberg2,
+    load_to_iceberg = PythonOperator(
+        task_id="load_to_iceberg",
+        python_callable=upsert_iceberg_table,
         op_kwargs={
-            "source_file": "warehouse/raw/cheapshark_data",
-            "target_table": "bronze.cheapshark_data",
+            "model": GameDeal,
+            "folder_path": "warehouse/raw/cheapshark_data",
+            "table_identifier": "bronze.cheapshark_data",
+            "primary_key": ["steamAppID", "ingestionDate"]
         },
     )
 
@@ -55,4 +58,4 @@ with DAG(
         operator_args={"install_deps": True},
     )
 
-    load_json >> convert_to_iceberg >> dbt_modelling
+    load_json >> load_to_iceberg >> dbt_modelling
