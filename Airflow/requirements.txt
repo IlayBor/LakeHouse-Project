@@ -1,4 +1,7 @@
 dbt-trino
 astronomer-cosmos
 apache-airflow-providers-trino
-duckdb
+pyiceberg
+pydantic
+s3fs
+pydantic_to_pyarrow

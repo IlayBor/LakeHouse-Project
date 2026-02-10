@@ -1,59 +1,59 @@
 from datetime import datetime
-from utils.utils import connect_to_s3, connect_to_duckdb
+from common.connections import catalog, s3fs
+from steam.model import SteamGame
 
 import requests
 import logging
 import time
 import json
 
-LOAD_PATH = "raw/steam_data"
+PATH = "warehouse/raw/steam_data"
 FILE_NAME = "game_data"
 
 BUCKET_NAME = "warehouse"
 
-def main(table_scheme, table_name):
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    s3 = connect_to_s3()
+
+def load_game_data(to_read_from_table_identifier):
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
 
     ingestion_date = datetime.now()
     max_games_allowed_in_batch = 10
 
-    current_batch_data = [] 
-    pages_in_current_batch = 0 
+    current_batch_data = []
+    pages_in_current_batch = 0
     file_index = 1
 
-    for steamappid in fetch_iceberg_table(table_scheme, table_name):
+    for steamappid in fetch_iceberg_table(to_read_from_table_identifier):
         game_data = get_steam_data(steamappid)
-        current_batch_data.append(game_data)
+        if game_data:
+            current_batch_data.append(game_data)
         pages_in_current_batch += 1
 
         if pages_in_current_batch >= max_games_allowed_in_batch:
-            upload_to_s3(s3, BUCKET_NAME, current_batch_data, f"{LOAD_PATH}/{ingestion_date.strftime("%Y/%m/%d")}/{FILE_NAME}_{file_index}.json")
+            with s3fs.open(f"{PATH}/{ingestion_date.strftime('%Y/%m/%d')}/{FILE_NAME}_{file_index}.json", "w") as f:
+                json.dump(current_batch_data, f)
             logging.info(f"Loaded batch {file_index}")
 
             current_batch_data = []
             pages_in_current_batch = 0
             file_index += 1
-            
+
         time.sleep(1.8)
 
     if current_batch_data:
         logging.info(f"Flushing remains...")
-        upload_to_s3(s3, BUCKET_NAME, current_batch_data, f"{LOAD_PATH}/{ingestion_date.strftime("%Y/%m/%d")}/{FILE_NAME}_{file_index}.json")
-    
-def fetch_iceberg_table(table_scheme, table_name):
-    con, lakekeeper_catalog_name = connect_to_duckdb()
-    target_table_path = lakekeeper_catalog_name + '.' + table_scheme + '.' + table_name
+        with s3fs.open(f"{PATH}/{ingestion_date.strftime('%Y/%m/%d')}/{FILE_NAME}_{file_index}.json", "w") as f:
+            json.dump(current_batch_data, f)
 
-    query = f"SELECT steamappid from {target_table_path}"
-    cursor = con.execute(query)
-
-    while True:
-        row = cursor.fetchone()
-        if row is None:
-            break
-
-        yield row[0]
+def fetch_iceberg_table(to_read_from_table_identifier):
+    table = catalog.load_table(to_read_from_table_identifier)
+    scan_table = table.scan( selected_fields=("steamAppID", )).to_arrow()
+    for row in scan_table.to_pylist():
+        steam_app_id = row["steamAppID"]
+        yield steam_app_id
 
 def get_steam_data(steamappid):
     logging.info(f"Grabbing {steamappid} steam data.")
@@ -65,21 +65,8 @@ def get_steam_data(steamappid):
         data = response.json()[steamappid]["data"]
         logging.info(f"Recieved game data")
         return data
-    
+
     except Exception as e:
         logging.error(f"failed to load {steamappid} - {e}")
         return
 
-def upload_to_s3(s3, bucket_name, data, key):
-    try:
-        s3.put_object(
-            Bucket=bucket_name,
-            Key=key,
-            Body= json.dumps(data)
-        )
-        logging.info("Uploaded data successfuly!")
-    except Exception as e:
-        logging.error(f"Couldnt upload to s3: {e}")
-        raise e
-
-main("bronze", "cheapshark_data")
