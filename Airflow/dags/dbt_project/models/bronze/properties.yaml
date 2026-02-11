@@ -1,9 +1,0 @@
-sources:
-  - name: iceberg
-    description: "raw iceberg"
-    database: iceberg
-    schema: bronze
-
-    tables:
-      - name: cheapshark_data
-        description: "steam cheapshark deals data"

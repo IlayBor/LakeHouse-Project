@@ -1,0 +1,9 @@
+sources:
+  - name: cheapshark
+    description: "bronze schema on trino"
+    database: iceberg
+    schema: bronze
+
+    tables:
+      - name: cheapshark_data
+        description: "steam cheapshark deals data"

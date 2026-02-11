@@ -8,7 +8,4 @@ lakehouse_profile:
       host: trino
       port: 8080
       catalog: iceberg
-      http_scheme: http
-      schema: ""
-      client_tags:
-        - dbt
+      schema: bronze
