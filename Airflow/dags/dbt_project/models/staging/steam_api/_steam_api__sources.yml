@@ -1,0 +1,9 @@
+sources:
+  - name: steam
+    description: "bronze schema on trino"
+    database: iceberg
+    schema: bronze
+
+    tables:
+      - name: steam_data
+        description: "steam game data"
