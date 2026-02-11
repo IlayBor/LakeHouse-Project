@@ -6,9 +6,9 @@ from airflow.providers.standard.operators.python import PythonOperator
 from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, RenderConfig
 from cosmos.profiles.trino import TrinoBaseProfileMapping
 
-from cheap_shark.ingestion import load_cheapshark_pages
+from cheapshark.ingestion import load_cheapshark_pages
 from common.transform import upsert_iceberg_table
-from cheap_shark.model import GameDeal
+from cheapshark.model import GameDeal
 
 DEFAULT_DBT_ROOT_PATH = Path(__file__).parent.parent / "dbt_project"
 
@@ -26,7 +26,7 @@ profile_config = ProfileConfig(
 )
 
 with DAG(
-    dag_id="cheap_shark_ingestion",
+    dag_id="cheapshark_ingestion",
     schedule=None,
     start_date=datetime(2026, 1, 1),
     catchup=False,
