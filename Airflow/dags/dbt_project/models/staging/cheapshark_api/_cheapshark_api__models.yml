@@ -1,0 +1,73 @@
+version: 2
+
+models:
+  - name: stg_cheapshark_api__game_deals
+    description: >
+      Staging model containing active deals and sales data sourced from the CheapShark API. 
+      This model specifically filters for deals from the Steam store (Store ID 1). 
+      It creates a clean, renamed, and type-cast dataset from the raw JSON ingestion.
+    columns:
+      # IDs
+      - name: deal_id
+        description: "Unique identifier for the specific deal configuration on CheapShark. Used to fetch further deal details."
+
+      - name: store_id
+        description: "The ID of the store where the deal is active. For this model, this should always be '1' (Steam)."
+
+      - name: game_id
+        description: "CheapShark's internal unique identifier for the game."
+
+      - name: steam_app_id
+        description: "The official App ID assigned by Steam. Useful for joining with other Steam-related datasets."
+
+      # Strings
+      - name: internal_name
+        description: "A URL-friendly, simplified version of the game title used internally by CheapShark."
+
+      - name: title
+        description: "The full display title of the game."
+
+      - name: meta_critic_link
+        description: "Relative URL path to the game's page on Metacritic."
+
+      - name: steam_rating_text
+        description: "Textual representation of the Steam user rating (e.g., 'Overwhelmingly Positive', 'Mixed')."
+
+      - name: thumb
+        description: "URL to the thumbnail image of the game."
+
+      # Numeric
+      - name: sale_price
+        description: "The current price of the game in the requested currency."
+
+      - name: normal_price
+        description: "The standard (MSRP) price of the game without any discounts."
+
+      - name: savings
+        description: "The percentage saved compared to the normal price (0 = no savings, 100 = free)."
+
+      - name: meta_critic_score
+        description: "The Metacritic score for the game (0-100). Returns 0 if no score is available."
+
+      - name: steam_rating_percent
+        description: "The percentage of positive user reviews on Steam (0-100)."
+
+      - name: steam_rating_count
+        description: "The total number of user reviews on Steam."
+
+      - name: deal_rating
+        description: "CheapShark's proprietary rating for how 'good' the deal is, on a scale of 0.0 to 10.0."
+
+      # Booleans
+      - name: is_on_sale
+        description: "Flag indicating if the game is currently being sold at a discount (1/True) or full price (0/False)."
+
+      # Dates
+      - name: release_date
+        description: "The date the game was originally released on Steam. Converted from Unix timestamp."
+
+      - name: last_change_date
+        description: "The date and time when this specific deal price or status was last updated. Converted from Unix timestamp."
+
+      - name: ingestion_date
+        description: "Audit column indicating when this record was loaded into the raw layer."
