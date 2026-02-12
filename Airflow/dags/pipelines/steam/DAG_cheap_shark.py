@@ -2,11 +2,11 @@ from datetime import datetime
 from airflow import DAG
 from airflow.providers.standard.operators.python import PythonOperator
 from cosmos import DbtTaskGroup, ProjectConfig, RenderConfig
-from common.connections import profile_config, DEFAULT_DBT_ROOT_PATH
 
-from steam.ingestion import load_game_data
-from common.transform import upsert_iceberg_table
-from steam.model import SteamGame
+from pipelines.common.connections import profile_config, DEFAULT_DBT_ROOT_PATH
+from pipelines.common.transform import upsert_iceberg_table
+from pipelines.steam.ingestion import load_game_data
+from pipelines.steam.model import SteamGame
 
 with DAG(
     dag_id="steam_data_ingestion",

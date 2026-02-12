@@ -1,6 +1,6 @@
 import pyarrow as pa
 from pydantic_to_pyarrow import get_pyarrow_schema
-from common.connections import catalog, s3fs
+from pipelines.common.connections import catalog, s3fs
 from pydantic import BaseModel
 from datetime import datetime
 import json

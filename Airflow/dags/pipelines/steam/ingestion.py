@@ -1,6 +1,6 @@
 from datetime import datetime
-from common.connections import catalog, s3fs
-from steam.model import SteamGame
+from pipelines.common.connections import catalog, s3fs
+from pipelines.steam.model import SteamGame
 
 import requests
 import logging

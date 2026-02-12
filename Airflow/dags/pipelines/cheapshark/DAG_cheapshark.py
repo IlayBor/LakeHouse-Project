@@ -4,10 +4,10 @@ from airflow.providers.standard.operators.python import PythonOperator
 
 from cosmos import DbtTaskGroup, ProjectConfig, RenderConfig
 
-from common.connections import profile_config, DEFAULT_DBT_ROOT_PATH
-from cheapshark.ingestion import load_cheapshark_pages
-from common.transform import upsert_iceberg_table
-from cheapshark.model import GameDeal
+from pipelines.common.connections import profile_config, DEFAULT_DBT_ROOT_PATH
+from pipelines.common.transform import upsert_iceberg_table
+from pipelines.cheapshark.ingestion import load_cheapshark_pages
+from pipelines.cheapshark.model import GameDeal
 
 
 with DAG(

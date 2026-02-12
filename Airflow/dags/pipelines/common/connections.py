@@ -18,7 +18,7 @@ s3fs = S3FileSystem(
     secret="24342434",
 )
 
-DEFAULT_DBT_ROOT_PATH = Path(__file__).parent.parent / "dbt_project"
+DEFAULT_DBT_ROOT_PATH = Path(__file__).parent.parent.parent / "dbt_project"
 profile_config = ProfileConfig(
     profile_name="lakehouse_profile",
     target_name="dev",
