@@ -1,29 +1,14 @@
-import os
-from pathlib import Path
 from datetime import datetime
 from airflow import DAG
 from airflow.providers.standard.operators.python import PythonOperator
-from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, RenderConfig
-from cosmos.profiles.trino import TrinoBaseProfileMapping
 
+from cosmos import DbtTaskGroup, ProjectConfig, RenderConfig
+
+from common.connections import profile_config, DEFAULT_DBT_ROOT_PATH
 from cheapshark.ingestion import load_cheapshark_pages
 from common.transform import upsert_iceberg_table
 from cheapshark.model import GameDeal
 
-DEFAULT_DBT_ROOT_PATH = Path(__file__).parent.parent / "dbt_project"
-
-profile_config = ProfileConfig(
-    profile_name="lakehouse_profile",
-    target_name="dev",
-    profile_mapping=TrinoBaseProfileMapping(
-        conn_id="trino",
-        profile_args={
-            "database": "iceberg",
-            "schema": "bronze",
-            "http_scheme": "http",
-        },
-    ),
-)
 
 with DAG(
     dag_id="cheapshark_ingestion",
