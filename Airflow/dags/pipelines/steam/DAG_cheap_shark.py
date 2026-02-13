@@ -1,12 +1,30 @@
 from datetime import datetime
 from airflow import DAG
 from airflow.providers.standard.operators.python import PythonOperator
-from cosmos import DbtTaskGroup, ProjectConfig, RenderConfig
 
-from pipelines.common.connections import profile_config, DEFAULT_DBT_ROOT_PATH
+from cosmos import DbtTaskGroup, ProjectConfig, RenderConfig
+from cosmos import ProfileConfig
+from cosmos.profiles.trino import TrinoBaseProfileMapping
+from pathlib import Path
+
+# from pipelines.common.connections import profile_config, DEFAULT_DBT_ROOT_PATH
 from pipelines.common.transform import upsert_iceberg_table
 from pipelines.steam.ingestion import load_game_data
 from pipelines.steam.model import SteamGame
+
+DEFAULT_DBT_ROOT_PATH = Path(__file__).parent.parent.parent / "dbt_project"
+profile_config = ProfileConfig(
+    profile_name="lakehouse_profile",
+    target_name="dev",
+    profile_mapping=TrinoBaseProfileMapping(
+        conn_id="trino",
+        profile_args={
+            "database": "iceberg",
+            "schema": "staging",
+            "http_scheme": "http",
+        },
+    ),
+)
 
 with DAG(
     dag_id="steam_data_ingestion",
