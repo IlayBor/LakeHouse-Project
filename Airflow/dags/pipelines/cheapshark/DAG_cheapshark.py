@@ -20,7 +20,10 @@ with DAG(
     load_json = PythonOperator(
         task_id="load_json_deals",
         python_callable=load_cheapshark_pages,
-        op_kwargs={"start_page": 0, "end_page": 5},
+        op_kwargs={
+                    "start_page": 0, 
+                    # "end_page": 5
+                   },
     )
 
     load_to_iceberg = PythonOperator(
@@ -29,7 +32,7 @@ with DAG(
         op_kwargs={
             "model": GameDeal,
             "folder_path": "warehouse/raw/cheapshark_data",
-            "table_identifier": "bronze.cheapshark_data",
+            "table_identifier": "staging.cheapshark_data",
             "primary_key": ["steamAppID", "ingestionDate"]
         },
     )

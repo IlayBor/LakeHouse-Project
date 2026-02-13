@@ -4,7 +4,7 @@ sources:
   - name: steam
     description: "Raw data ingested from the Steam Store API (public endpoints)."
     database: iceberg
-    schema: bronze
+    schema: staging
     loader: "Python Script (requests)"
 
     tables:

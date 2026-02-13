@@ -2,9 +2,9 @@ version: 2
 
 sources:
   - name: cheapshark
-    description: "Bronze schema on Trino containing raw data ingested from external APIs."
+    description: "staging schema on Trino containing raw data ingested from external APIs."
     database: iceberg
-    schema: bronze
+    schema: staging
     loader: "Python Script (API Request)"
 
     tables:
@@ -69,4 +69,4 @@ sources:
             description: "Raw Unix timestamp (integer) of the last price/deal update."
 
           - name: ingestiondate
-            description: "The timestamp when this record was inserted into the Bronze table."
+            description: "The timestamp when this record was inserted into the staging table."

@@ -26,7 +26,7 @@ profile_config = ProfileConfig(
         conn_id="trino",
         profile_args={
             "database": "iceberg",
-            "schema": "bronze",
+            "schema": "staging",
             "http_scheme": "http",
         },
     ),

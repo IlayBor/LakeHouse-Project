@@ -19,7 +19,7 @@ with DAG(
         task_id="load_game_data",
         python_callable=load_game_data,
         op_kwargs={
-            "to_read_from_table_identifier": "bronze.cheapshark_data"
+            "to_read_from_table_identifier": "staging.cheapshark_data"
             },
     )
 
@@ -29,7 +29,7 @@ with DAG(
         op_kwargs={
             "model": SteamGame,
             "folder_path": "warehouse/raw/steam_data",
-            "table_identifier": "bronze.steam_data",
+            "table_identifier": "staging.steam_data",
             "primary_key": ["steam_appid"]
         },
     )

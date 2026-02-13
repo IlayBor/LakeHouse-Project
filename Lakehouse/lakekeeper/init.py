@@ -44,7 +44,7 @@ def init():
             return
         
     # Creating Namespace
-    namespaces = ["bronze", "silver", "gold"]
+    namespaces = ["staging", "intermediate", "marts"]
     for ns in namespaces:
         payload={"namespace": [ns], "properties": {"location": f"s3://warehouse/{ns}"}}
         try:

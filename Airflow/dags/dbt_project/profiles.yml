@@ -8,4 +8,4 @@ lakehouse_profile:
       host: trino
       port: 8080
       catalog: iceberg
-      schema: bronze
+      schema: staging
