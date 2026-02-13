@@ -10,119 +10,119 @@ def validate_requirements(value: Any) -> Any:
 
 
 class FullGameItem(BaseModel):
-    appid: Optional[int] = None
-    name: Optional[str] = None
+    appid: int | None = None
+    name: str | None = None
 
 
 class Requirements(BaseModel):
-    minimum: Optional[str] = None
-    recommended: Optional[str] = None
+    minimum: str | None = None
+    recommended: str | None = None
 
 
 class DemoItem(BaseModel):
-    appid: Optional[int] = None
-    description: Optional[str] = None
+    appid: int | None = None
+    description: str | None = None
 
 
 class PriceOverview(BaseModel):
-    currency: Optional[str] = None
-    initial: Optional[float] = None
-    final: Optional[float] = None
-    discount_percent: Optional[float] = None
-    initial_formatted: Optional[str] = None
-    final_formatted: Optional[str] = None
+    currency: str | None = None
+    initial: float | None = None
+    final: float | None = None
+    discount_percent: float | None = None
+    initial_formatted: str | None = None
+    final_formatted: str | None = None
 
 
 class PackageGroupSub(BaseModel):
-    packageid: Optional[int] = None
-    percent_savings_text: Optional[str] = None
-    percent_savings: Optional[float] = None
-    option_text: Optional[str] = None
-    option_description: Optional[str] = None
-    can_get_free_license: Optional[str] = None
-    is_free_license: Optional[bool] = None
-    price_in_cents_with_discount: Optional[int] = None
+    packageid: int | None = None
+    percent_savings_text: str | None = None
+    percent_savings: float | None = None
+    option_text: str | None = None
+    option_description: str | None = None
+    can_get_free_license: str | None = None
+    is_free_license: bool | None = None
+    price_in_cents_with_discount: int | None = None
 
 
 class PackageGroup(BaseModel):
-    name: Optional[str] = None
-    title: Optional[str] = None
-    description: Optional[str] = None
-    selection_text: Optional[str] = None
-    save_text: Optional[str] = None
-    display_type: Optional[int] = None
-    is_recurring_subscription: Optional[str] = None
-    subs: Optional[List[PackageGroupSub]] = None
+    name: str | None = None
+    title: str | None = None
+    description: str | None = None
+    selection_text: str | None = None
+    save_text: str | None = None
+    display_type: int | None = None
+    is_recurring_subscription: str | None = None
+    subs: List[PackageGroupSub] | None = None
 
 
 class Platforms(BaseModel):
-    windows: Optional[bool] = None
-    mac: Optional[bool] = None
-    linux: Optional[bool] = None
+    windows: bool | None = None
+    mac: bool | None = None
+    linux: bool | None = None
 
 
 class Metacritic(BaseModel):
-    score: Optional[int] = None
-    url: Optional[str] = None
+    score: int | None = None
+    url: str | None = None
 
 
 class Category(BaseModel):
-    id: Optional[int] = None
-    description: Optional[str] = None
+    id: int | None = None
+    description: str | None = None
 
 
 class Genre(BaseModel):
-    id: Optional[str] = None
-    description: Optional[str] = None
+    id: str | None = None
+    description: str | None = None
 
 
 class Screenshot(BaseModel):
-    id: Optional[int] = None
-    path_thumbnail: Optional[str] = None
-    path_full: Optional[str] = None
+    id: int | None = None
+    path_thumbnail: str | None = None
+    path_full: str | None = None
 
 
 class MovieResolution(BaseModel):
-    resolution_480: Optional[str] = Field(default=None, alias="480")
-    max: Optional[str] = None
+    resolution_480: str | None = Field(default=None, alias="480")
+    max: str | None = None
 
 
 class Movie(BaseModel):
-    id: Optional[int] = None
-    name: Optional[str] = None
-    thumbnail: Optional[str] = None
-    webm: Optional[MovieResolution] = None
-    mp4: Optional[MovieResolution] = None
-    highlight: Optional[bool] = None
+    id: int | None = None
+    name: str | None = None
+    thumbnail: str | None = None
+    webm: MovieResolution | None = None
+    mp4: MovieResolution | None = None
+    highlight: bool | None = None
 
 
 class Recommendations(BaseModel):
-    total: Optional[int] = None
+    total: int | None = None
 
 
 class AchievementHighlight(BaseModel):
-    name: Optional[str] = None
-    path: Optional[str] = None
+    name: str | None = None
+    path: str | None = None
 
 
 class Achievements(BaseModel):
-    total: Optional[int] = None
-    highlighted: Optional[List[AchievementHighlight]] = None
+    total: int | None = None
+    highlighted: List[AchievementHighlight] | None = None
 
 
 class ReleaseDate(BaseModel):
-    coming_soon: Optional[bool] = None
-    date: Optional[str] = None
+    coming_soon: bool | None = None
+    date: str | None = None
 
 
 class SupportInfo(BaseModel):
-    url: Optional[str] = None
-    email: Optional[str] = None
+    url: str | None = None
+    email: str | None = None
 
 
 class ContentDescriptors(BaseModel):
-    ids: Optional[List[int]] = None
-    notes: Optional[str] = None
+    ids: List[int] | None = None
+    notes: str | None = None
 
 
 class SteamGame(BaseModel):
