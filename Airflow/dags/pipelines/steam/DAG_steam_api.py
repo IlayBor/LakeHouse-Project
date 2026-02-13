@@ -52,12 +52,12 @@ with DAG(
         },
     )
 
-    # dbt_modelling = DbtTaskGroup(
-    #     group_id="dbt_transform",
-    #     project_config=ProjectConfig(DEFAULT_DBT_ROOT_PATH),
-    #     profile_config=profile_config,
-    #     render_config=RenderConfig(select=["+fct_deals"]),
-    #     operator_args={"install_deps": True},
-    # )
+    dbt_modelling = DbtTaskGroup(
+        group_id="dbt_transform",
+        project_config=ProjectConfig(DEFAULT_DBT_ROOT_PATH),
+        profile_config=profile_config,
+        render_config=RenderConfig(select=["+stg_steam_api__game_details"]),
+        operator_args={"install_deps": True},
+    )
 
-    load_json >> load_to_iceberg # >> dbt_modelling
+    load_json >> load_to_iceberg >> dbt_modelling
