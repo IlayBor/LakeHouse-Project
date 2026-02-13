@@ -5,7 +5,7 @@ with source as (
 renamed as (
     select
         -- ids
-        steam_appid as steam_app_id,
+        CAST(steam_appid AS VARCHAR) as steam_app_id,
 
         -- strings
         "type" as "type",
