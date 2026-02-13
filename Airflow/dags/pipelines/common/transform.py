@@ -20,6 +20,6 @@ def upsert_iceberg_table(
     for path in s3fs.glob(f"{folder_path}/{today}/*.json"):
         with s3fs.open(path) as file:
             data = json.load(file)
-        data = [model(**obj).model_dump() for obj in data]
+        data = [model(**obj).model_dump() for obj in data[:121]]
         table = pa.Table.from_pylist(data, schema=schema)
         iceberg_table.upsert(table, primary_key)
