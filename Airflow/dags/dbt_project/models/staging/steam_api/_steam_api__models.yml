@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: stg_steam_api__game_details
+  - name: stg_steam_api__games_details
     description: >
       Staging model containing detailed metadata for Steam applications. 
       This model creates a clean, renamed dataset from the raw JSON ingestion, 
