@@ -126,45 +126,45 @@ class ContentDescriptors(BaseModel):
 
 
 class SteamGame(BaseModel):
-    type: Optional[str] = None
-    name: Optional[str] = None
+    type: str | None = None
+    name: str | None = None
     steam_appid: int
-    required_age: Optional[int] = None
-    is_free: Optional[bool] = None
-    controller_support: Optional[str] = None
-    dlc: Optional[List[int]] = None
-    detailed_description: Optional[str] = None
-    about_the_game: Optional[str] = None
-    short_description: Optional[str] = None
-    fullgame: Optional[List[FullGameItem]] = None
-    supported_languages: Optional[str] = None
-    header_image: Optional[str] = None
-    website: Optional[str] = None
+    required_age: int | None = None
+    is_free: bool | None = None
+    controller_support: str | None = None
+    dlc: List[int] | None = None
+    detailed_description: str | None = None
+    about_the_game: str | None = None
+    short_description: str | None = None
+    fullgame: List[FullGameItem] | None = None
+    supported_languages: str | None = None
+    header_image: str | None = None
+    website: str | None = None
     pc_requirements: Annotated[
-        Optional[Requirements], BeforeValidator(validate_requirements)
+        Requirements | None, BeforeValidator(validate_requirements)
     ] = None
     mac_requirements: Annotated[
-        Optional[Requirements], BeforeValidator(validate_requirements)
+        Requirements | None, BeforeValidator(validate_requirements)
     ] = None
     linux_requirements: Annotated[
-        Optional[Requirements], BeforeValidator(validate_requirements)
+        Requirements | None, BeforeValidator(validate_requirements)
     ] = None
-    legal_notice: Optional[str] = None
-    developers: Optional[List[str]] = None
-    publishers: Optional[List[str]] = None
-    demos: Optional[List[DemoItem]] = None
-    price_overview: Optional[PriceOverview] = None
-    packages: Optional[List[int]] = None
-    package_groups: Optional[List[PackageGroup]] = None
-    platforms: Optional[Platforms] = None
-    metacritic: Optional[Metacritic] = None
-    categories: Optional[List[Category]] = None
-    genres: Optional[List[Genre]] = None
-    screenshots: Optional[List[Screenshot]] = None
-    movies: Optional[List[Movie]] = None
-    recommendations: Optional[Recommendations] = None
-    achievements: Optional[Achievements] = None
-    release_date: Optional[ReleaseDate] = None
-    support_info: Optional[SupportInfo] = None
-    background: Optional[str] = None
-    content_descriptors: Optional[ContentDescriptors] = None
+    legal_notice: str | None = None
+    developers: List[str] | None = None
+    publishers: List[str] | None = None
+    demos: List[DemoItem] | None = None
+    price_overview: PriceOverview | None = None
+    packages: List[int] | None = None
+    package_groups: List[PackageGroup] | None = None
+    platforms: Platforms | None = None
+    metacritic: Metacritic | None = None
+    categories: List[Category] | None = None
+    genres: List[Genre] | None = None
+    screenshots: List[Screenshot] | None = None
+    movies: List[Movie] | None = None
+    recommendations: Recommendations | None = None
+    achievements: Achievements | None = None
+    release_date: ReleaseDate | None = None
+    support_info: SupportInfo | None = None
+    background: str | None = None
+    content_descriptors: ContentDescriptors | None = None
