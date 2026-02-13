@@ -11,7 +11,7 @@ models:
       - name: steam_app_id
         description: "The unique integer identifier for the application on Steam."
 
-      # Strings / Descriptive
+      # Strings
       - name: type
         description: "The type of application (e.g., 'game', 'dlc', 'demo')."
 
