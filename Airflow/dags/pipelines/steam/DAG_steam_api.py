@@ -27,7 +27,7 @@ profile_config = ProfileConfig(
 )
 
 with DAG(
-    dag_id="steam_data_ingestion",
+    dag_id="get_games_metadata",
     schedule=None,
     start_date=datetime(2026, 1, 1),
     catchup=False,
