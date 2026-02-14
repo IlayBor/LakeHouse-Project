@@ -33,7 +33,7 @@ with DAG(
     catchup=False,
     tags=["steam-etl"],
 ) as dag:
-    load_json = PythonOperator(
+    get_missing_games = PythonOperator(
         task_id="load_game_data",
         python_callable=load_game_data,
         op_kwargs={
@@ -60,4 +60,4 @@ with DAG(
         operator_args={"install_deps": True},
     )
 
-    load_json >> load_to_iceberg >> dbt_modelling
+    get_missing_games >> load_to_iceberg >> dbt_modelling
