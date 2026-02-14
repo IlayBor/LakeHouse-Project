@@ -37,7 +37,7 @@ with DAG(
         task_id="load_game_data",
         python_callable=load_game_data,
         op_kwargs={
-            "to_read_from_table_identifier": "staging.cheapshark_data"
+            "to_read_from_table_identifier": "intermediate.int_games_to_fetch"
             },
     )
 
@@ -56,7 +56,7 @@ with DAG(
         group_id="dbt_transform",
         project_config=ProjectConfig(DEFAULT_DBT_ROOT_PATH),
         profile_config=profile_config,
-        render_config=RenderConfig(select=["+stg_steam_api__game_details"]),
+        render_config=RenderConfig(select=["+stg_steam_api__games_details"]),
         operator_args={"install_deps": True},
     )
 

@@ -50,9 +50,9 @@ def load_game_data(to_read_from_table_identifier):
 
 def fetch_iceberg_table(to_read_from_table_identifier):
     table = catalog.load_table(to_read_from_table_identifier)
-    scan_table = table.scan( selected_fields=("steamAppID", )).to_arrow()
+    scan_table = table.scan( selected_fields=("steam_app_id", )).to_arrow()
     for row in scan_table.to_pylist():
-        steam_app_id = row["steamAppID"]
+        steam_app_id = row["steam_app_id"]
         yield steam_app_id
 
 def get_steam_data(steamappid):
