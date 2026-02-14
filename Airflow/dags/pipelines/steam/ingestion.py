@@ -13,7 +13,7 @@ FILE_NAME = "game_data"
 BUCKET_NAME = "warehouse"
 
 
-def load_game_data(to_read_from_table_identifier):
+def load_missing_games(to_read_from_table_identifier):
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",

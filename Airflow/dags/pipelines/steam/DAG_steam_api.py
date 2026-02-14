@@ -9,7 +9,7 @@ from pathlib import Path
 
 # from pipelines.common.connections import profile_config, DEFAULT_DBT_ROOT_PATH
 from pipelines.common.transform import upsert_iceberg_table
-from pipelines.steam.ingestion import load_game_data
+from pipelines.steam.ingestion import load_missing_games
 from pipelines.steam.model import SteamGame
 
 DEFAULT_DBT_ROOT_PATH = Path(__file__).parent.parent.parent / "dbt_project"
@@ -34,8 +34,8 @@ with DAG(
     tags=["steam-etl"],
 ) as dag:
     get_missing_games = PythonOperator(
-        task_id="load_game_data",
-        python_callable=load_game_data,
+        task_id="get_missing_games",
+        python_callable=load_missing_games,
         op_kwargs={
             "to_read_from_table_identifier": "intermediate.int_games_to_fetch"
             },
