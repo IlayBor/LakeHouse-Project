@@ -20,7 +20,7 @@ renamed as (
         -- numeric
         saleprice as sale_price,
         normalprice as normal_price,
-        savings as savings,
+        savings as discount_percent,
         metacriticscore as meta_critic_score,
         steamratingpercent as steam_rating_percent,
         steamratingcount as steam_rating_count,
