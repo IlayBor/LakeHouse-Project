@@ -27,7 +27,7 @@ profile_config = ProfileConfig(
 )
 
 with DAG(
-    dag_id="cheapshark_ingestion",
+    dag_id="get_cheapshark_deals",
     schedule=None,
     start_date=datetime(2026, 1, 1),
     catchup=False,
