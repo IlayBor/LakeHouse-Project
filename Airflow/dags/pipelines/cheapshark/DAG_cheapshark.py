@@ -57,7 +57,7 @@ with DAG(
         group_id="dbt_transform",
         project_config=ProjectConfig(DEFAULT_DBT_ROOT_PATH),
         profile_config=profile_config,
-        render_config=RenderConfig(select=["+stg_cheapshark_api__game_deals"]),
+        render_config=RenderConfig(select=["+int_games_to_fetch"]),
         operator_args={"install_deps": True},
     )
 
