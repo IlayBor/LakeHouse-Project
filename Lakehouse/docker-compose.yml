@@ -32,7 +32,7 @@ services:
     entrypoint: >
       /bin/sh -c "
       sleep 5;
-      /usr/bin/mc alias set dockerminio http://minio:6000 ilaybor 24342434;
+      /usr/bin/mc alias set dockerminio http://minio:9000 ilaybor 24342434;
       /usr/bin/mc mb --ignore-existing dockerminio/warehouse;
       exit 0;
       "
