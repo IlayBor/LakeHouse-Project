@@ -1,0 +1,83 @@
+version: 2
+
+sources:
+  - name: steam
+    description: "Raw data ingested from the Steam Store API (public endpoints)."
+    database: iceberg
+    schema: staging
+    loader: "Python Script (requests)"
+
+    tables:
+      - name: steam_data
+        description: >
+          Raw metadata for individual Steam applications fetched via the '/api/appdetails' endpoint. 
+          Contains rich text descriptions, requirements, and nested category/genre data.
+        columns:
+          - name: steam_appid
+            description: "The unique integer ID of the application on Steam."
+
+          - name: type
+            description: "The type of application (e.g., 'game', 'dlc', 'demo')."
+
+          - name: name
+            description: "The official display title of the application."
+
+          - name: required_age
+            description: "Minimum age requirement for the game (0 if all ages)."
+
+          - name: is_free
+            description: "Boolean flag indicating if the game is free-to-play."
+
+          - name: detailed_description
+            description: "Full game description in raw HTML format."
+
+          - name: short_description
+            description: "A brief snippet description of the game."
+
+          - name: supported_languages
+            description: "Raw HTML string listing supported languages and audio availability."
+
+          - name: header_image
+            description: "URL to the game's header image."
+
+          - name: website
+            description: "URL to the official website."
+
+          - name: pc_requirements
+            description: "Nested JSON/Struct containing minimum and recommended PC specs."
+
+          - name: developers
+            description: "Array of developer names."
+
+          - name: publishers
+            description: "Array of publisher names."
+
+          - name: platforms
+            description: "Nested JSON/Struct with boolean flags for windows, mac, and linux."
+
+          - name: metacritic
+            description: "Nested JSON containing the Metacritic score and URL."
+
+          - name: categories
+            description: "Array of objects listing categories (e.g., 'Multi-player', 'Steam Achievements')."
+
+          - name: genres
+            description: "Array of objects listing genres (e.g., 'Action', 'Free to Play')."
+
+          - name: screenshots
+            description: "Array of screenshot objects with thumbnail and full-size URLs."
+
+          - name: movies
+            description: "Array of movie/trailer objects containing video URLs."
+
+          - name: recommendations
+            description: "Nested object containing total recommendation counts."
+
+          - name: achievements
+            description: "Nested object containing total achievement counts and highlighted examples."
+
+          - name: release_date
+            description: "Nested object containing the 'coming_soon' flag and the date string (e.g., '10 Oct, 2007')."
+
+          - name: content_descriptors
+            description: "Nested object containing content warning IDs and notes."

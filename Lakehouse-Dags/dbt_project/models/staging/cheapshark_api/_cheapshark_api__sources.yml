@@ -1,0 +1,72 @@
+version: 2
+
+sources:
+  - name: cheapshark
+    description: "staging schema on Trino containing raw data ingested from external APIs."
+    database: iceberg
+    schema: staging
+    loader: "Python Script (API Request)"
+
+    tables:
+      - name: cheapshark_data
+        description: "Raw Steam deals data ingested from the CheapShark API (/deals endpoint)."
+        columns:
+          - name: dealid
+            description: "Raw unique identifier string for the deal configuration."
+
+          - name: storeid
+            description: "The store ID as returned by the API (e.g., '1' for Steam)."
+
+          - name: gameid
+            description: "CheapShark's internal game ID."
+
+          - name: steamappid
+            description: "The official Steam Application ID."
+
+          - name: internalname
+            description: "URL-friendly game title used internally by CheapShark."
+
+          - name: title
+            description: "The full display title of the game."
+
+          - name: metacriticlink
+            description: "Relative URL path to the Metacritic page."
+
+          - name: steamratingtext
+            description: "Raw text of the steam user rating."
+
+          - name: thumb
+            description: "URL to the raw thumbnail image."
+
+          - name: saleprice
+            description: "Current sale price as a raw number/string."
+
+          - name: normalprice
+            description: "Standard MSRP price as a raw number/string."
+
+          - name: savings
+            description: "Percentage savings as a raw float/string."
+
+          - name: metacriticscore
+            description: "Metacritic score (0-100)."
+
+          - name: steamratingpercent
+            description: "Percentage of positive reviews (0-100)."
+
+          - name: steamratingcount
+            description: "Total count of user reviews."
+
+          - name: dealrating
+            description: "CheapShark's deal rating score (0.0 - 10.0)."
+
+          - name: isonsale
+            description: "Boolean flag (1/0) indicating if the item is on sale."
+
+          - name: releasedate
+            description: "Raw Unix timestamp (integer) of the release date."
+
+          - name: lastchange
+            description: "Raw Unix timestamp (integer) of the last price/deal update."
+
+          - name: ingestiondate
+            description: "The timestamp when this record was inserted into the staging table."

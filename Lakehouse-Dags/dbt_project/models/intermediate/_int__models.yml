@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: int_games_to_fetch
+    description: >
+      Intermediate model that identifies which games (by their Steam App ID) need to have their details fetched from the Steam API. 
+      It compares the list of games currently available in the staging CheapShark API model with those already present in the staging Steam API details model, and returns only the new ones that haven't been fetched yet.
+    columns:
+      - name: steam_app_id
+        description: "Unique identifier for the game on the Steam platform. Used to fetch game details from the Steam API."
+ 

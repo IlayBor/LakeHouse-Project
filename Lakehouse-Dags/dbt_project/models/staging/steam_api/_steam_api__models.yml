@@ -1,0 +1,121 @@
+version: 2
+
+models:
+  - name: stg_steam_api__games_details
+    description: >
+      Staging model containing detailed metadata for Steam applications. 
+      This model creates a clean, renamed dataset from the raw JSON ingestion, 
+      preserving nested structures (arrays/structs) for downstream flattening or extraction.
+    columns:
+      # IDs
+      - name: steam_app_id
+        description: "The unique integer identifier for the application on Steam."
+
+      # Strings
+      - name: type
+        description: "The type of application (e.g., 'game', 'dlc', 'demo')."
+
+      - name: name
+        description: "The official display title of the application."
+
+      - name: controller_support
+        description: "Indicates the level of controller support (e.g., 'full', 'partial')."
+
+      - name: detailed_description
+        description: "The full, rich-text (HTML) description of the game."
+
+      - name: about_the_game
+        description: "A summary description (HTML) usually found at the top of the store page."
+
+      - name: short_description
+        description: "A brief, plain-text snippet description of the game."
+
+      - name: supported_languages
+        description: "Raw HTML string listing all supported languages and audio availability."
+
+      - name: header_image
+        description: "URL to the application's header/banner image."
+
+      - name: website
+        description: "URL to the official external website for the application."
+
+      - name: legal_notice
+        description: "Copyright and legal disclaimer text."
+
+      - name: background
+        description: "URL to the page background image."
+
+      # Numeric
+      - name: required_age
+        description: "Minimum age requirement for the application (0 if all ages)."
+
+      # Booleans
+      - name: is_free
+        description: "Flag indicating if the application is free-to-play."
+
+      # Arrays & Structs (Complex Types)
+      - name: dlc
+        description: "List of Steam App IDs for downloadable content associated with this game."
+
+      - name: full_game
+        description: "Struct containing the parent App ID and name if this application is a DLC or demo."
+
+      - name: pc_requirements
+        description: "Struct containing minimum and recommended hardware specifications for Windows."
+
+      - name: mac_requirements
+        description: "Struct containing minimum and recommended hardware specifications for macOS."
+
+      - name: linux_requirements
+        description: "Struct containing minimum and recommended hardware specifications for Linux."
+
+      - name: developers
+        description: "List of developer names."
+
+      - name: publishers
+        description: "List of publisher names."
+
+      - name: demos
+        description: "List of demo configurations available for this application."
+
+      - name: price_overview
+        description: "Struct containing pricing details (currency, initial price, final price, discount percent)."
+
+      - name: packages
+        description: "List of Steam Package IDs (Subs) that include this application."
+
+      - name: package_groups
+        description: "List of package group configurations (e.g., subscriptions, bundles)."
+
+      - name: platforms
+        description: "Struct containing boolean flags for supported operating systems (windows, mac, linux)."
+
+      - name: metacritic
+        description: "Struct containing the Metacritic score and a link to the review page."
+
+      - name: categories
+        description: "List of objects describing game features (e.g., 'Multi-player', 'Steam Achievements')."
+
+      - name: genres
+        description: "List of objects describing the game genres (e.g., 'Action', 'RPG')."
+
+      - name: screenshots
+        description: "List of screenshot objects containing thumbnail and full-size image URLs."
+
+      - name: movies
+        description: "List of trailer/movie objects containing video URLs in various formats."
+
+      - name: recommendations
+        description: "Struct containing the total count of user recommendations."
+
+      - name: achievements
+        description: "Struct containing the total count of achievements and a list of highlighted ones."
+
+      - name: release_date
+        description: "Struct containing the release date string and a 'coming soon' boolean flag."
+
+      - name: support_info
+        description: "Struct containing the support website URL and email address."
+
+      - name: content_descriptors
+        description: "Struct containing IDs and notes regarding content warnings (violence, gore, etc.)."
