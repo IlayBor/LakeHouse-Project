@@ -64,7 +64,7 @@ with DAG(
         group_id="dbt_transform",
         project_config=ProjectConfig(DEFAULT_DBT_ROOT_PATH),
         profile_config=profile_config,
-        render_config=RenderConfig(select=["stg_steam_api__games_details"]),
+        render_config=RenderConfig(select=["stg_steam_api__games_details", "path:models/marts"]),
         operator_args={"install_deps": True},
     )
 
