@@ -20,7 +20,10 @@ The dashboard queries the following mart tables via Trino (`iceberg.marts` schem
 ![Dashboard Preview](resources/dashboard-screenshot.png)
 -->
 
-*Screenshot coming soon.*
+![WhatsApp Image 2026-03-23 at 22 58 45](https://github.com/user-attachments/assets/937ce099-1172-4f63-9ea7-04d2b2db32ad)
+![WhatsApp Image 2026-03-23 at 22 59 02](https://github.com/user-attachments/assets/10871af4-950f-4760-b95f-1b75857857df)
+![WhatsApp Image 2026-03-23 at 22 59 29](https://github.com/user-attachments/assets/abbac2c5-65fc-494b-9d62-1e150cd9e740)
+
 
 ## Prerequisites
 
