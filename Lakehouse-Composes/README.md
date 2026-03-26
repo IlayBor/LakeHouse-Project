@@ -6,7 +6,8 @@ Two Docker Compose stacks that provision a complete open lakehouse platform -- f
 
 Defined in `Lakehouse/docker-compose.yml`. Provides the core data platform services.
 
-<img width="580" height="548" alt="image" src="https://github.com/user-attachments/assets/86de0c99-668b-46f9-9f53-dc613c3cca81" />
+
+<img width="480" height="448" alt="image" src="https://github.com/user-attachments/assets/86de0c99-668b-46f9-9f53-dc613c3cca81" />
 
 
 | Service | Image | Port | Role |
@@ -27,7 +28,10 @@ Three init containers run automatically on first startup, in order:
 ## Airflow Stack
 
 Defined in `Airflow/docker-compose.yaml`. Provides workflow orchestration using the CeleryExecutor architecture.
+
+
 <img width="451" height="291" alt="image" src="https://github.com/user-attachments/assets/2ad6c59f-1454-481d-ba42-ce8b586b8d87" />
+
 
 The custom Airflow image (`Dockerfile`) extends `apache/airflow:3.1.6` with `dbt-trino`, `astronomer-cosmos`, `pyiceberg`, `pydantic`, `s3fs`, and other pipeline dependencies.
 
