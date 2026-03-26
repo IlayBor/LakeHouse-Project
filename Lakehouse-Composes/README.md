@@ -40,33 +40,3 @@ DAGs are synced from Git via the `apache-airflow-providers-git` bundle, tracking
 ## Networking
 
 Both stacks share a Docker bridge network named `shared-data-network`. The Lakehouse stack creates it; the Airflow stack joins it as an external network. This allows Airflow workers to reach MinIO, LakeKeeper, and Trino by container hostname.
-
-## Getting Started
-
-1. Add host entries (required for local development outside Docker):
-   ```
-   127.0.0.1 minio
-   127.0.0.1 trino
-   127.0.0.1 lakekeeper
-   ```
-
-2. Start the Lakehouse stack first (creates the shared network):
-   ```bash
-   docker compose up                  # from Lakehouse-Composes/Lakehouse/
-   ```
-
-3. Wait for all services to be healthy, then start the Airflow stack:
-   ```bash
-   docker compose up -d --build       # from Lakehouse-Composes/Airflow/
-   ```
-
-4. Add Airflow trino connection called "trino" and git connection called "git-conn" and fill the necessary information.
-
-## Service Endpoints
-
-| Service | URL |
-|---|---|
-| Airflow UI | [http://localhost:8090](http://localhost:8090) |
-| MinIO Console | [http://localhost:6001](http://localhost:6001) |
-| LakeKeeper | [http://localhost:8181](http://localhost:8181) |
-| Trino | [http://localhost:8080](http://localhost:8080) |
