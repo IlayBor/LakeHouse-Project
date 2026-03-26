@@ -7,7 +7,7 @@ Two Docker Compose stacks that provision a complete open lakehouse platform -- f
 Defined in `Lakehouse/docker-compose.yml`. Provides the core data platform services.
 
 
-<img width="480" height="448" alt="image" src="https://github.com/user-attachments/assets/86de0c99-668b-46f9-9f53-dc613c3cca81" />
+<img width="280" height="248" alt="image" src="https://github.com/user-attachments/assets/86de0c99-668b-46f9-9f53-dc613c3cca81" />
 
 
 | Service | Image | Port | Role |
