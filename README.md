@@ -54,4 +54,6 @@ See each subfolder's README for detailed documentation.
    ```bash
    docker compose up -d --build       # from Lakehouse-Composes/Airflow/
    ```
-4. Open the Airflow UI at [http://localhost:8090](http://localhost:8090) and trigger the DAGs.
+4. Add Airflow trino connection called "trino" and git connection called "git-conn" and fill the necessary information.
+   
+5. Open the Airflow UI at [http://localhost:8090](http://localhost:8090) and trigger the DAGs.
