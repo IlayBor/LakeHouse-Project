@@ -15,7 +15,7 @@ End-to-end ELT pipeline built on an open lakehouse architecture. Game deal data 
 | Table Format | Apache Iceberg |
 | Iceberg Catalog | LakeKeeper (REST) |
 | Query Engine | Trino |
-| Transformations | dbt-trino |
+| Transformations | DBT |
 | Data Validation | Pydantic |
 | BI | Power BI |
 | Infrastructure | Docker Compose |
@@ -44,6 +44,7 @@ See each subfolder's README for detailed documentation.
    ```
    127.0.0.1 minio
    127.0.0.1 trino
+   127.0.0.1 lakekeeper
    ```
 2. Start the Lakehouse stack (must start first):
    ```bash
