@@ -3,45 +3,8 @@
 End-to-end ELT pipeline built on an open lakehouse architecture. Game deal data is ingested from external APIs, landed as raw JSON in S3-compatible object storage, upserted into Apache Iceberg tables, transformed through a dbt modelling layer on Trino, and served to a Power BI dashboard -- all orchestrated by Apache Airflow.
 
 ## Architecture
+<img width="1975" height="495" alt="Architecture" src="https://github.com/user-attachments/assets/d0b0fcf4-2b2c-4be2-8560-de84c3a6f27b" />
 
-```mermaid
-flowchart LR
-    subgraph Sources
-        CS[CheapShark API]
-        ST[Steam API]
-    end
-
-    subgraph Ingestion
-        PY[Python Pipelines\nPydantic + Requests]
-    end
-
-    subgraph Storage
-        S3[MinIO\nS3-Compatible Storage]
-        ICE[Apache Iceberg\nLakeKeeper REST Catalog]
-    end
-
-    subgraph Transformation
-        TR[Trino\nQuery Engine]
-        DBT[dbt\nstaging → intermediate → marts]
-    end
-
-    subgraph BI
-        PBI[Power BI\nDashboard]
-    end
-
-    CS --> PY
-    ST --> PY
-    PY -- raw JSON --> S3
-    S3 -- PyIceberg upsert --> ICE
-    ICE <--> TR
-    TR <--> DBT
-    DBT -- mart tables --> PBI
-
-    AF[Apache Airflow + Cosmos]
-    AF -. orchestrates .-> PY
-    AF -. orchestrates .-> ICE
-    AF -. orchestrates .-> DBT
-```
 
 ## Tech Stack
 
