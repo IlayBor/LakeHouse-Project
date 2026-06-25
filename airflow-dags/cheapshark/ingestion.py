@@ -1,5 +1,5 @@
 from datetime import datetime
-from pipelines.common.connections import s3fs
+from common.connections import s3fs
 
 import requests
 import logging
