@@ -13,16 +13,19 @@ Orchestrated by Apache Airflow 3.1.6 with Astronomer Cosmos for dbt integration.
 - Python pipelines: `Lakehouse-Dags/pipelines/{common,cheapshark,steam}/`
 - dbt project: `Lakehouse-Dags/dbt_project/`
 - dbt models: `Lakehouse-Dags/dbt_project/models/{staging,intermediate,marts}/`
+- Docker (top-level orchestrator): `Lakehouse-Composes/docker-compose.yml`
 - Docker (Lakehouse): `Lakehouse-Composes/Lakehouse/docker-compose.yml`
 - Docker (Airflow): `Lakehouse-Composes/Airflow/docker-compose.yaml`
 
 ## Infrastructure Commands
-### Start Lakehouse stack (must run first)
+### Start everything (recommended)
+A top-level compose orchestrates both stacks via Compose's `include` directive.
+```bash
+docker compose up -d --build            # from Lakehouse-Composes/
+```
+### Start an individual stack (still supported)
 ```bash
 docker compose up                       # from Lakehouse-Composes/Lakehouse/
-```
-### Start Airflow stack
-```bash
 docker compose up -d --build            # from Lakehouse-Composes/Airflow/
 ```
 ### Service URLs

@@ -2,7 +2,7 @@ import pyiceberg
 from s3fs import S3FileSystem
 import pyiceberg.catalog.rest
 
-host = "10.0.0.96"
+host = "localhost"
 
 catalog = pyiceberg.catalog.rest.RestCatalog(
     name="catalog_name",
