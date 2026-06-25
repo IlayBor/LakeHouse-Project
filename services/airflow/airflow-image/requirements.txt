@@ -1,0 +1,8 @@
+dbt-trino
+astronomer-cosmos
+apache-airflow-providers-trino
+apache-airflow-providers-git
+pyiceberg
+pydantic
+s3fs
+pydantic_to_pyarrow
