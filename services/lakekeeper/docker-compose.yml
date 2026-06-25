@@ -1,0 +1,61 @@
+services:
+  # Lakekeeper Iceberg Catalog
+  lakekeeper:
+    image: quay.io/lakekeeper/catalog:latest-main
+    container_name: lakekeeper
+    hostname: lakekeeper
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment: &lakekeeper-environment
+      LAKEKEEPER__CATALOG__DATABASE__POSTGRES__CONNECTION_STRING: "postgres://ilaybor:24342434@lakekeeper-postgres:5432/lakekeeper_catalog"
+      LAKEKEEPER__AUTH__OIDC_PROVIDER_URI: ""
+      LAKEKEEPER__PG_ENCRYPTION_KEY: This-is-NOT-Secure!
+      LAKEKEEPER__PG_DATABASE_URL_READ: postgresql://ilaybor:24342434@lakekeeper-postgres:5432/lakekeeper_catalog
+      LAKEKEEPER__PG_DATABASE_URL_WRITE: postgresql://ilaybor:24342434@lakekeeper-postgres:5432/lakekeeper_catalog
+      LAKEKEEPER__AUTHZ_BACKEND: allowall
+    ports:
+      - "8181:8181"
+    command: ["serve"]
+    healthcheck:
+      test: ["CMD", "/home/nonroot/lakekeeper", "healthcheck"]
+      interval: 1s
+      timeout: 10s
+      retries: 3
+      start_period: 3s
+    networks:
+      - lakehouse-network
+
+  # Lakekeeper migrate function
+  migrate:
+    image: quay.io/lakekeeper/catalog:latest-main
+    container_name: lakekeeper-migrate
+    depends_on:
+      lakekeeper-postgres:
+        condition: service_healthy
+    environment: *lakekeeper-environment
+    command: ["migrate"]
+    networks:
+      - lakehouse-network
+
+  # Create default lakekeeper warehouse and namespace
+  lakekeeper-init:
+    image: python:3.9-slim
+    container_name: lakekeeper-init-script
+    depends_on:
+      lakekeeper:
+        condition: service_healthy
+      minio_create_default_bucket:
+        condition: service_completed_successfully
+    volumes:
+      - ./init:/lakekeeper
+    working_dir: /lakekeeper
+    command: >
+      sh -c "pip install requests && python init.py"
+    networks:
+      - lakehouse-network
+
+networks:
+  lakehouse-network:
+    driver: bridge
+    name: shared-data-network

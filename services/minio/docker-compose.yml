@@ -1,0 +1,48 @@
+services:
+  # MinIO Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    hostname: minio
+    environment:
+      MINIO_ROOT_USER: ilaybor
+      MINIO_ROOT_PASSWORD: 24342434
+    ports:
+      - "6000:9000"
+      - "6001:9001"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lakehouse-network
+
+  # Create default bucket called "warehouse"
+  minio_create_default_bucket:
+    image: minio/minio:latest
+    container_name: minio_create_default_bucket
+    depends_on:
+      minio:
+        condition: service_healthy
+    restart: on-failure
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      /usr/bin/mc alias set dockerminio http://minio:9000 ilaybor 24342434;
+      /usr/bin/mc mb --ignore-existing dockerminio/warehouse;
+      exit 0;
+      "
+    networks:
+      - lakehouse-network
+
+volumes:
+  minio_data:
+
+networks:
+  lakehouse-network:
+    driver: bridge
+    name: shared-data-network

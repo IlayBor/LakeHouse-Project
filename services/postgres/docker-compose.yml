@@ -1,0 +1,30 @@
+services:
+  # Postgres for LakeKeeper Catalog
+  lakekeeper-postgres:
+    image: postgres:17
+    container_name: lakekeeper-postgres
+    hostname: lakekeeper-postgres
+    environment:
+      POSTGRES_USER: ilaybor
+      POSTGRES_DB: lakekeeper_catalog
+      POSTGRES_PASSWORD: 24342434
+    ports:
+      - "5434:5432"
+    volumes:
+      - lakekeeper_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ilaybor -p 5432 -d lakekeeper_catalog"]
+      interval: 2s
+      timeout: 10s
+      retries: 2
+      start_period: 10s
+    networks:
+      - lakehouse-network
+
+volumes:
+  lakekeeper_postgres_data:
+
+networks:
+  lakehouse-network:
+    driver: bridge
+    name: shared-data-network

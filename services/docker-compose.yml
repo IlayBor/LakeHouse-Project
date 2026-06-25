@@ -1,0 +1,14 @@
+# Top-level orchestrator.
+# Merges every per-service Compose file into a single project so that
+# cross-service `depends_on`, the shared `shared-data-network` network, and
+# all named volumes resolve correctly. Each included file keeps its own
+# relative paths (build contexts, bind mounts) because `include` resolves
+# them relative to the included file's directory.
+#
+#   docker compose up -d --build      # from services/
+include:
+  - path: minio/docker-compose.yml
+  - path: postgres/docker-compose.yml
+  - path: lakekeeper/docker-compose.yml
+  - path: trino/docker-compose.yml
+  - path: airflow/docker-compose.yml
