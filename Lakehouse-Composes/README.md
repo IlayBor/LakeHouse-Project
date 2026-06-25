@@ -2,6 +2,20 @@
 
 Two Docker Compose stacks that provision a complete open lakehouse platform -- from S3-compatible object storage to a distributed SQL query engine -- with fully automated bootstrap. No manual setup beyond `docker compose up`.
 
+## Quick Start
+
+A top-level `docker-compose.yml` orchestrates both stacks via Compose's native
+[`include`](https://docs.docker.com/compose/how-tos/multiple-compose-files/include/)
+directive, so the whole platform comes up with a single command:
+
+```bash
+docker compose up -d --build      # from Lakehouse-Composes/
+```
+
+This brings up the Lakehouse stack and the Airflow stack together as one Compose
+project. Each child stack remains runnable on its own from its respective
+subdirectory (`Lakehouse/` or `Airflow/`).
+
 ## Lakehouse Stack
 
 Defined in `Lakehouse/docker-compose.yml`. Provides the core data platform services.
@@ -39,4 +53,9 @@ DAGs are synced from Git via the `apache-airflow-providers-git` bundle, tracking
 
 ## Networking
 
-Both stacks share a Docker bridge network named `shared-data-network`. The Lakehouse stack creates it; the Airflow stack joins it as an external network. This allows Airflow workers to reach MinIO, LakeKeeper, and Trino by container hostname.
+Both stacks share a Docker bridge network named `shared-data-network`, declared
+identically in each stack's compose file. When launched together via the
+top-level `include`, Compose creates a single shared network for the combined
+project; when a stack is launched on its own, it creates/joins the same named
+network. This allows Airflow workers to reach MinIO, LakeKeeper, and Trino by
+container hostname.

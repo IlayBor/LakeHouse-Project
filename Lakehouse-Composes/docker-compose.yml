@@ -1,0 +1,3 @@
+include:
+  - path: Lakehouse/docker-compose.yml
+  - path: Airflow/docker-compose.yaml
