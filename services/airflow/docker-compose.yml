@@ -75,7 +75,7 @@ x-airflow-common:
           "git_conn_id": "git-conn",
           "tracking_ref": "main",
           "refresh_interval": 120,
-          "subdir": "Lakehouse-Dags"
+          "subdir": "airflow-dags"
         }
       }
     ]'
