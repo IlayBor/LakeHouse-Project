@@ -50,7 +50,7 @@ x-airflow-common:
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
   # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.1.6}
-  build: .
+  build: ./airflow-image/.
   env_file:
     - ${ENV_FILE_PATH:-.env}
   environment:
@@ -63,6 +63,8 @@ x-airflow-common:
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     # CUSTOM TRINO CONNECTION FOR AIRFLOW DAGs
     AIRFLOW_CONN_TRINO: 'trino://ilaybor@trino:8080/'
+    # CUSTOM GIT CONNECTION FOR THE DAG BUNDLE (public repo => no credentials needed)
+    AIRFLOW_CONN_GIT_CONN: '{"conn_type": "git", "host": "https://github.com/IlayBor/LakeHouse-Project.git"}'
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
@@ -72,8 +74,8 @@ x-airflow-common:
         "name": "my-git-repo",
         "classpath": "airflow.providers.git.bundles.git.GitDagBundle",
         "kwargs": {
-          "git_conn_id": "git-conn",
-          "tracking_ref": "main",
+          "git_conn_id": "git_conn",
+          "tracking_ref": "dev",
           "refresh_interval": 120,
           "subdir": "airflow-dags"
         }
