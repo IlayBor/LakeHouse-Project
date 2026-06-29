@@ -4,9 +4,11 @@ services:
     image: minio/minio:latest
     container_name: minio
     hostname: minio
+    env_file:
+      - ../../.env
     environment:
-      MINIO_ROOT_USER: ilaybor
-      MINIO_ROOT_PASSWORD: 24342434
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     ports:
       - "6000:9000"
       - "6001:9001"
@@ -25,6 +27,8 @@ services:
   minio_create_default_bucket:
     image: minio/minio:latest
     container_name: minio_create_default_bucket
+    env_file:
+      - ../../.env
     depends_on:
       minio:
         condition: service_healthy
@@ -32,8 +36,8 @@ services:
     entrypoint: >
       /bin/sh -c "
       sleep 5;
-      /usr/bin/mc alias set dockerminio http://minio:9000 ilaybor 24342434;
-      /usr/bin/mc mb --ignore-existing dockerminio/warehouse;
+      /usr/bin/mc alias set dockerminio http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc mb --ignore-existing dockerminio/$${S3_BUCKET};
       exit 0;
       "
     networks:

@@ -1,0 +1,10 @@
+# Real secrets live here - never commit. Copy .env.example -> .env locally.
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Rendered-at-startup config (secret-bearing, generated from *.tmpl)
+services/lakekeeper/init/warehouse.json
+services/trino/etc/trino/catalog/*.properties

@@ -52,7 +52,7 @@ x-airflow-common:
   # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.1.6}
   build: ./airflow-image/.
   env_file:
-    - ${ENV_FILE_PATH:-.env}
+    - ${ENV_FILE_PATH:-../../.env}
   environment:
     &airflow-common-env
     # AIRFLOW__API__PORT: 8090
@@ -62,10 +62,12 @@ x-airflow-common:
     AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     # CUSTOM TRINO CONNECTION FOR AIRFLOW DAGs
-    AIRFLOW_CONN_TRINO: 'trino://ilaybor@trino:8080/'
+    AIRFLOW_CONN_TRINO: 'trino://${LAKEHOUSE_USER}@${TRINO_HOST_DOCKER}:${TRINO_PORT}/'
     # CUSTOM GIT CONNECTION FOR THE DAG BUNDLE (public repo => no credentials needed)
     AIRFLOW_CONN_GIT_CONN: '{"conn_type": "git", "host": "https://github.com/IlayBor/LakeHouse-Project.git"}'
-    AIRFLOW__CORE__FERNET_KEY: ''
+    AIRFLOW__CORE__FERNET_KEY: '${AIRFLOW_FERNET_KEY}'
+    AIRFLOW__API__SECRET_KEY: '${AIRFLOW_SECRET_KEY}'
+    AIRFLOW__API_AUTH__JWT_SECRET: '${AIRFLOW_JWT_SECRET}'
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://airflow-apiserver:8080/execution/'

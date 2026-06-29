@@ -3,6 +3,8 @@ services:
     image: trinodb/trino:latest
     container_name: trino
     hostname: trino
+    env_file:
+      - ../../.env
     depends_on:
       lakekeeper:
         condition: service_healthy
@@ -12,6 +14,8 @@ services:
       - "8080:8080"
     volumes:
       - ./etc/trino/catalog:/etc/trino/catalog
+      - ./entrypoint.sh:/usr/local/bin/lakehouse-entrypoint.sh:ro
+    entrypoint: ["/bin/bash", "/usr/local/bin/lakehouse-entrypoint.sh"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/v1/info"]
       interval: 10s

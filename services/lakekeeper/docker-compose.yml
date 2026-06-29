@@ -4,15 +4,17 @@ services:
     image: quay.io/lakekeeper/catalog:latest-main
     container_name: lakekeeper
     hostname: lakekeeper
+    env_file:
+      - ../../.env
     depends_on:
       migrate:
         condition: service_completed_successfully
     environment: &lakekeeper-environment
-      LAKEKEEPER__CATALOG__DATABASE__POSTGRES__CONNECTION_STRING: "postgres://ilaybor:24342434@lakekeeper-postgres:5432/lakekeeper_catalog"
+      LAKEKEEPER__CATALOG__DATABASE__POSTGRES__CONNECTION_STRING: "postgres://${LK_POSTGRES_USER}:${LK_POSTGRES_PASSWORD}@lakekeeper-postgres:5432/${LK_POSTGRES_DB}"
       LAKEKEEPER__AUTH__OIDC_PROVIDER_URI: ""
-      LAKEKEEPER__PG_ENCRYPTION_KEY: This-is-NOT-Secure!
-      LAKEKEEPER__PG_DATABASE_URL_READ: postgresql://ilaybor:24342434@lakekeeper-postgres:5432/lakekeeper_catalog
-      LAKEKEEPER__PG_DATABASE_URL_WRITE: postgresql://ilaybor:24342434@lakekeeper-postgres:5432/lakekeeper_catalog
+      LAKEKEEPER__PG_ENCRYPTION_KEY: ${LK_ENCRYPTION_KEY}
+      LAKEKEEPER__PG_DATABASE_URL_READ: postgresql://${LK_POSTGRES_USER}:${LK_POSTGRES_PASSWORD}@lakekeeper-postgres:5432/${LK_POSTGRES_DB}
+      LAKEKEEPER__PG_DATABASE_URL_WRITE: postgresql://${LK_POSTGRES_USER}:${LK_POSTGRES_PASSWORD}@lakekeeper-postgres:5432/${LK_POSTGRES_DB}
       LAKEKEEPER__AUTHZ_BACKEND: allowall
     ports:
       - "8181:8181"
@@ -42,6 +44,8 @@ services:
   lakekeeper-init:
     image: python:3.9-slim
     container_name: lakekeeper-init-script
+    env_file:
+      - ../../.env
     depends_on:
       lakekeeper:
         condition: service_healthy
@@ -51,7 +55,9 @@ services:
       - ./init:/lakekeeper
     working_dir: /lakekeeper
     command: >
-      sh -c "pip install requests && python init.py"
+      sh -c "apt-get update && apt-get install -y gettext-base &&
+      envsubst < warehouse.json.tmpl > warehouse.json &&
+      pip install requests && python init.py"
     networks:
       - lakehouse-network
 

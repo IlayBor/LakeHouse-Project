@@ -176,5 +176,7 @@ Schemas map to: `staging`, `intermediate`, `marts` in the `iceberg` catalog.
 - dbt profile config defined per-DAG file using `ProfileConfig` + `TrinoBaseProfileMapping`
 
 ## Security Notes
-- Credentials are currently hardcoded (MinIO, Trino, PostgreSQL). Do NOT add new hardcoded secrets.
+- All configuration/credentials are centralized in a single root `.env` (copy `.env.example`). Every compose stack, the Python pipelines, and dbt read from it. Do NOT re-hardcode secrets; add a new key to `.env`/`.env.example` instead.
+- `services/.env` is a symlink to the root `.env` so the top-level orchestrator interpolates vars when run from `services/`.
+- Trino's `iceberg.properties` and LakeKeeper's `warehouse.json` are generated at startup from `*.tmpl` files (rendered, secret-bearing copies are git-ignored).
 - The `.env` file is tracked in git. Be cautious with sensitive values.

@@ -1,11 +1,11 @@
 {
-  "warehouse-name": "lakehouse_warehouse",
+  "warehouse-name": "${CATALOG_WAREHOUSE}",
   "project-id": "00000000-0000-0000-0000-000000000000",
   "storage-profile": {
     "type": "s3",
-    "bucket": "warehouse",
+    "bucket": "${S3_BUCKET}",
     "assume-role-arn": null,
-    "endpoint": "http://minio:9000",
+    "endpoint": "${S3_ENDPOINT_URL}",
     "region": "local-01",
     "path-style-access": true,
     "flavor": "minio",
@@ -14,7 +14,7 @@
   "storage-credential": {
     "type": "s3",
     "credential-type": "access-key",
-    "aws-access-key-id": "ilaybor",
-    "aws-secret-access-key": "24342434"
+    "aws-access-key-id": "${AWS_ACCESS_KEY_ID}",
+    "aws-secret-access-key": "${AWS_SECRET_ACCESS_KEY}"
   }
 }

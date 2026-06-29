@@ -1,9 +1,11 @@
 import requests
 import json
 import logging
+import os
 
-HOST = "lakekeeper"
+HOST = os.environ.get("LAKEKEEPER_HOST", "lakekeeper")
 BASE_URL = f"http://{HOST}:8181"
+S3_BUCKET = os.environ.get("S3_BUCKET", "warehouse")
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
@@ -46,7 +48,7 @@ def init():
     # Creating Namespace
     namespaces = ["staging", "intermediate", "marts"]
     for ns in namespaces:
-        payload={"namespace": [ns], "properties": {"location": f"s3://warehouse/{ns}"}}
+        payload={"namespace": [ns], "properties": {"location": f"s3://{S3_BUCKET}/{ns}"}}
         try:
             logging.info("Creating Namespace...")
             ns_response = requests.post(f"{BASE_URL}/catalog/v1/{warehouse_id}/namespaces", json=payload)

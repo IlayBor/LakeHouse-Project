@@ -1,13 +1,15 @@
 from datetime import datetime
 from common.connections import s3fs
 
+import os
 import requests
 import logging
 import time
 import json
 
 
-PATH = "warehouse/raw/cheapshark_data"
+BUCKET_NAME = os.environ["S3_BUCKET"]
+PATH = f"{BUCKET_NAME}/raw/cheapshark_data"
 FILE_NAME = "deals"
 
 def load_cheapshark_pages(start_page=0, end_page=None):

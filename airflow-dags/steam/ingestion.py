@@ -2,15 +2,15 @@ from datetime import datetime
 from common.connections import catalog, s3fs
 from steam.model import SteamGame
 
+import os
 import requests
 import logging
 import time
 import json
 
-PATH = "warehouse/raw/steam_data"
+BUCKET_NAME = os.environ["S3_BUCKET"]
+PATH = f"{BUCKET_NAME}/raw/steam_data"
 FILE_NAME = "game_data"
-
-BUCKET_NAME = "warehouse"
 
 
 def load_missing_games(to_read_from_table_identifier):

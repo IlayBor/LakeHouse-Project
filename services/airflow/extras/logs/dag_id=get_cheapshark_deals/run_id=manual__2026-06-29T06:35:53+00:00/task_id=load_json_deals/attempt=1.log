@@ -1,0 +1,80 @@
+{"timestamp":"2026-06-29T06:35:55.990144Z","level":"warning","event":"section/key [openlineage/namespace] not found in config","logger":"airflow.configuration","filename":"configuration.py","lineno":1111}
+{"timestamp":"2026-06-29T06:35:56.094063Z","level":"info","event":"DAG bundles loaded: my-git-repo","logger":"airflow.dag_processing.bundles.manager.DagBundlesManager","filename":"manager.py","lineno":179}
+{"timestamp":"2026-06-29T06:35:56.095270Z","level":"warning","event":"Using Connection.from_json from `airflow.models` is deprecated.Please use `from_json` on Connection from sdk(airflow.sdk.Connection) instead","category":"DeprecationWarning","filename":"/home/airflow/.local/lib/python3.12/site-packages/airflow/models/connection.py","lineno":574,"logger":"py.warnings"}
+{"timestamp":"2026-06-29T06:35:56.095694Z","level":"info","event":"Cloning bare repository","bundle_name":"my-git-repo","version":"596fbb2f512c9991fef10c89fe5b912989de75b0","bare_repo_path":"PosixPath('/tmp/airflow/dag_bundles/my-git-repo/bare')","repo_path":"PosixPath('/tmp/airflow/dag_bundles/my-git-repo/versions/596fbb2f512c9991fef10c89fe5b912989de75b0')","versions_path":"PosixPath('/tmp/airflow/dag_bundles/my-git-repo/versions')","git_conn_id":"git_conn","submodules":false,"logger":"airflow.providers.git.bundles.git","filename":"git.py","lineno":200}
+{"timestamp":"2026-06-29T06:35:57.962792Z","level":"warning","event":"Repository clone/open failed, cleaning up and retrying","bundle_name":"my-git-repo","version":"596fbb2f512c9991fef10c89fe5b912989de75b0","bare_repo_path":"PosixPath('/tmp/airflow/dag_bundles/my-git-repo/bare')","repo_path":"PosixPath('/tmp/airflow/dag_bundles/my-git-repo/versions/596fbb2f512c9991fef10c89fe5b912989de75b0')","versions_path":"PosixPath('/tmp/airflow/dag_bundles/my-git-repo/versions')","git_conn_id":"git_conn","submodules":false,"exc":"InvalidGitRepositoryError('/tmp/airflow/dag_bundles/my-git-repo/versions/596fbb2f512c9991fef10c89fe5b912989de75b0')","logger":"airflow.providers.git.bundles.git","filename":"git.py","lineno":180}
+{"timestamp":"2026-06-29T06:35:57.969716Z","level":"info","event":"Cloning repository","bundle_name":"my-git-repo","version":"596fbb2f512c9991fef10c89fe5b912989de75b0","bare_repo_path":"PosixPath('/tmp/airflow/dag_bundles/my-git-repo/bare')","repo_path":"PosixPath('/tmp/airflow/dag_bundles/my-git-repo/versions/596fbb2f512c9991fef10c89fe5b912989de75b0')","versions_path":"PosixPath('/tmp/airflow/dag_bundles/my-git-repo/versions')","git_conn_id":"git_conn","submodules":false,"logger":"airflow.providers.git.bundles.git","filename":"git.py","lineno":166}
+{"timestamp":"2026-06-29T06:35:58.006983Z","level":"info","event":"Filling up the DagBag from /tmp/airflow/dag_bundles/my-git-repo/versions/596fbb2f512c9991fef10c89fe5b912989de75b0/airflow-dags/cheapshark/DAG_cheapshark.py","logger":"airflow.models.dagbag.DagBag","filename":"dagbag.py","lineno":593}
+{"timestamp":"2026-06-29T06:35:58.275691Z","level":"info","event":"::group::Cosmos DAG parsing logs","logger":"cosmos.converter","filename":"converter.py","lineno":293}
+{"timestamp":"2026-06-29T06:35:58.276099Z","level":"info","event":"Trying to parse the dbt project using dbt ls cache cosmos_cache__get_cheapshark_deals__dbt_transform...","logger":"cosmos.dbt.graph","filename":"graph.py","lineno":781}
+{"timestamp":"2026-06-29T06:35:58.282720Z","level":"info","event":"Cosmos performance: time to calculate cache identifier cosmos_cache__get_cheapshark_deals__dbt_transform for current version: 0.0004811250000784639","logger":"cosmos.cache","filename":"cache.py","lineno":333}
+{"timestamp":"2026-06-29T06:35:58.282868Z","level":"info","event":"Cosmos performance [58949f2f25c9|758]: The cache size for cosmos_cache__get_cheapshark_deals__dbt_transform is 1726","logger":"cosmos.dbt.graph","filename":"graph.py","lineno":798}
+{"timestamp":"2026-06-29T06:35:58.283284Z","level":"info","event":"Cosmos performance: Cache hit for cosmos_cache__get_cheapshark_deals__dbt_transform - 5d5dc19a4d21d68d9e2dd97b4b147311,35c51d063f0c828f4111bbac634f6471","logger":"cosmos.dbt.graph","filename":"graph.py","lineno":806}
+{"timestamp":"2026-06-29T06:35:58.283896Z","level":"info","event":"Total nodes: 2","logger":"cosmos.dbt.graph","filename":"graph.py","lineno":711}
+{"timestamp":"2026-06-29T06:35:58.284037Z","level":"info","event":"Total filtered nodes: 2","logger":"cosmos.dbt.graph","filename":"graph.py","lineno":712}
+{"timestamp":"2026-06-29T06:35:58.284206Z","level":"info","event":"Cosmos performance (get_cheapshark_deals__dbt_transform) -  [58949f2f25c9|758]: It took 0.00803s to parse the dbt project for DAG using LoadMode.DBT_LS_CACHE","logger":"cosmos.converter","filename":"converter.py","lineno":340}
+{"timestamp":"2026-06-29T06:35:58.284529Z","level":"info","event":"Project /tmp/airflow/dag_bundles/my-git-repo/versions/596fbb2f512c9991fef10c89fe5b912989de75b0/dbt_project does not have {'dependencies.yml', 'packages.yml'}","logger":"cosmos.dbt.project","filename":"project.py","lineno":40}
+{"timestamp":"2026-06-29T06:35:58.285136Z","level":"info","event":"Project /tmp/airflow/dag_bundles/my-git-repo/versions/596fbb2f512c9991fef10c89fe5b912989de75b0/dbt_project does not have {'dependencies.yml', 'packages.yml'}","logger":"cosmos.dbt.project","filename":"project.py","lineno":40}
+{"timestamp":"2026-06-29T06:35:58.285444Z","level":"info","event":"Cosmos performance (get_cheapshark_deals__dbt_transform) - [58949f2f25c9|758]: It took 0.00135s to build the Airflow DAG.","logger":"cosmos.converter","filename":"converter.py","lineno":387}
+{"timestamp":"2026-06-29T06:35:58.285483Z","level":"info","event":"::endgroup::Cosmos DAG parsing logs","logger":"cosmos.converter","filename":"converter.py","lineno":390}
+{"timestamp":"2026-06-29T06:35:58.301519Z","level":"info","event":"Fetching page 0","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:01.276174Z","level":"info","event":"Fetching page 1","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:03.955203Z","level":"info","event":"Fetching page 2","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:08.156580Z","level":"info","event":"Fetching page 3","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:12.515745Z","level":"info","event":"Fetching page 4","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:15.281974Z","level":"info","event":"Fetching page 5","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:18.039256Z","level":"info","event":"Fetching page 6","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:21.116560Z","level":"info","event":"Fetching page 7","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:24.168207Z","level":"info","event":"Fetching page 8","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:26.865523Z","level":"info","event":"Fetching page 9","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:28.202575Z","level":"info","event":"Loaded batch 1","logger":"root","filename":"ingestion.py","lineno":32}
+{"timestamp":"2026-06-29T06:36:30.003686Z","level":"info","event":"Fetching page 10","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:32.794741Z","level":"info","event":"Fetching page 11","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:35.863297Z","level":"info","event":"Fetching page 12","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:38.625708Z","level":"info","event":"Fetching page 13","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:42.937018Z","level":"info","event":"Fetching page 14","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:46.364932Z","level":"info","event":"Fetching page 15","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:50.309457Z","level":"info","event":"Fetching page 16","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:53.370569Z","level":"info","event":"Fetching page 17","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:56.234473Z","level":"info","event":"Fetching page 18","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:36:59.168473Z","level":"info","event":"Fetching page 19","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:00.150762Z","level":"info","event":"Loaded batch 2","logger":"root","filename":"ingestion.py","lineno":32}
+{"timestamp":"2026-06-29T06:37:01.952571Z","level":"info","event":"Fetching page 20","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:08.080519Z","level":"info","event":"Fetching page 21","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:10.840486Z","level":"info","event":"Fetching page 22","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:13.911904Z","level":"info","event":"Fetching page 23","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:16.676622Z","level":"info","event":"Fetching page 24","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:19.650533Z","level":"info","event":"Fetching page 25","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:22.516156Z","level":"info","event":"Fetching page 26","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:25.282206Z","level":"info","event":"Fetching page 27","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:28.037351Z","level":"info","event":"Fetching page 28","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:30.806751Z","level":"info","event":"Fetching page 29","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:32.718668Z","level":"info","event":"Loaded batch 3","logger":"root","filename":"ingestion.py","lineno":32}
+{"timestamp":"2026-06-29T06:37:34.525238Z","level":"info","event":"Fetching page 30","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:37.385847Z","level":"info","event":"Fetching page 31","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:40.328293Z","level":"info","event":"Fetching page 32","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:43.396653Z","level":"info","event":"Fetching page 33","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:46.478721Z","level":"info","event":"Fetching page 34","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:49.234023Z","level":"info","event":"Fetching page 35","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:52.310766Z","level":"info","event":"Fetching page 36","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:55.081198Z","level":"info","event":"Fetching page 37","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:37:58.149782Z","level":"info","event":"Fetching page 38","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:38:00.907887Z","level":"info","event":"Fetching page 39","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:38:01.888246Z","level":"info","event":"Loaded batch 4","logger":"root","filename":"ingestion.py","lineno":32}
+{"timestamp":"2026-06-29T06:38:03.690220Z","level":"info","event":"Fetching page 40","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:38:08.905154Z","level":"info","event":"Fetching page 41","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:38:11.967793Z","level":"info","event":"Fetching page 42","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:38:15.045162Z","level":"info","event":"Fetching page 43","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:38:18.109681Z","level":"info","event":"Fetching page 44","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:38:21.190524Z","level":"info","event":"Fetching page 45","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:38:24.877419Z","level":"info","event":"Fetching page 46","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:38:27.634129Z","level":"info","event":"Fetching page 47","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:38:30.513025Z","level":"info","event":"Fetching page 48","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:38:33.476362Z","level":"info","event":"Fetching page 49","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:38:34.467925Z","level":"info","event":"Loaded batch 5","logger":"root","filename":"ingestion.py","lineno":32}
+{"timestamp":"2026-06-29T06:38:36.269943Z","level":"info","event":"Fetching page 50","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:38:39.304470Z","level":"info","event":"Fetching page 51","logger":"root","filename":"ingestion.py","lineno":54}
+{"timestamp":"2026-06-29T06:38:39.631606Z","level":"error","event":"Got error on page 51: 400 Client Error: Bad Request for url: https://www.cheapshark.com/api/1.0/deals?storeID=1&pageNumber=51","logger":"root","filename":"ingestion.py","lineno":76}
+{"timestamp":"2026-06-29T06:38:39.633457Z","level":"info","event":"Flushing remains...","logger":"root","filename":"ingestion.py","lineno":39}
+{"timestamp":"2026-06-29T06:38:39.649667Z","level":"info","event":"Ingestion completed.","logger":"root","filename":"ingestion.py","lineno":43}
+{"timestamp":"2026-06-29T06:38:39.650809Z","level":"info","event":"Done. Returned value was: None","logger":"airflow.task.operators.airflow.providers.standard.operators.python.PythonOperator","filename":"python.py","lineno":216}

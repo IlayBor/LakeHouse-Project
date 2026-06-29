@@ -4,16 +4,18 @@ services:
     image: postgres:17
     container_name: lakekeeper-postgres
     hostname: lakekeeper-postgres
+    env_file:
+      - ../../.env
     environment:
-      POSTGRES_USER: ilaybor
-      POSTGRES_DB: lakekeeper_catalog
-      POSTGRES_PASSWORD: 24342434
+      POSTGRES_USER: ${LK_POSTGRES_USER}
+      POSTGRES_DB: ${LK_POSTGRES_DB}
+      POSTGRES_PASSWORD: ${LK_POSTGRES_PASSWORD}
     ports:
       - "5434:5432"
     volumes:
       - lakekeeper_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ilaybor -p 5432 -d lakekeeper_catalog"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -p 5432 -d $${POSTGRES_DB}"]
       interval: 2s
       timeout: 10s
       retries: 2
